@@ -1,8 +1,11 @@
 package com.ccproject.ccremote;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,7 +19,6 @@ public class ScanServerTool
 
 	private static final String DISCOVER_REQUEST = "nya?";
 	private static final String DISCOVER_RESPONSE = "nya!";
-	private static final int PORT = 2333;
 	private static final int TIME_OUT = 500;
 
 	/**
@@ -28,6 +30,8 @@ public class ScanServerTool
 		WifiManager wifiManager = (WifiManager) MyApplication.getContext().getSystemService(Context.WIFI_SERVICE);
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		int ip = wifiInfo.getIpAddress(); //获得的ip是按ip地址的第4~1字节存储的
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
+		int port = preferences.getInt("port", Resources.getSystem().getInteger(R.integer.default_port));
 		serverList.clear();
 
 		DatagramSocket socket = null;
@@ -37,7 +41,7 @@ public class ScanServerTool
 			InetAddress broadcastIp = InetAddress.getByAddress(new byte[]{(byte) ip, (byte)(ip>>8), (byte)(ip>>16), (byte)0xFF});
 			socket = new DatagramSocket();
 			socket.setSoTimeout(TIME_OUT);
-			DatagramPacket sendPacket = new DatagramPacket(DISCOVER_REQUEST.getBytes(), DISCOVER_REQUEST.length(), broadcastIp, PORT);
+			DatagramPacket sendPacket = new DatagramPacket(DISCOVER_REQUEST.getBytes(), DISCOVER_REQUEST.length(), broadcastIp, port);
 			socket.send(sendPacket);
 
 			byte[] buffer = new byte[1024];

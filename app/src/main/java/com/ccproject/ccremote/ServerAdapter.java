@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder>
 {
 	private List<Server> mServerList;
+	private OnItemClickListener mOnItemClickListener;
 
 	static class ViewHolder extends RecyclerView.ViewHolder
 	{
@@ -44,6 +46,12 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 		Server server = mServerList.get(position);
 		holder.nameText.setText(server.getName());
 		holder.ipText.setText(server.getIp());
+		if (mOnItemClickListener != null)
+		{
+			holder.itemView.setOnClickListener((v)->
+				mOnItemClickListener.onItemClick(mServerList.get(position))
+			);
+		}
 	}
 
 	@Override
@@ -51,4 +59,15 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 	{
 		return mServerList.size();
 	}
+
+	public void setOnItemClickListener(OnItemClickListener onItemClickListener)
+	{
+		mOnItemClickListener = onItemClickListener;
+	}
+
+	public interface OnItemClickListener
+	{
+		void onItemClick(Server server);
+	}
+
 }

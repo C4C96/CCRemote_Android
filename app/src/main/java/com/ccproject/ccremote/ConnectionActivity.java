@@ -1,10 +1,16 @@
 package com.ccproject.ccremote;
 
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
@@ -36,6 +42,13 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 		recyclerView.setLayoutManager(layoutManager);
 		adapter = new ServerAdapter(mServerList);
 		recyclerView.setAdapter(adapter);
+		adapter.setOnItemClickListener((server)->
+		{
+			Log.d(TAG, "Server("+server.getIp()+") is clicked");
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ConnectionActivity.this);
+			int port = preferences.getInt("port", Resources.getSystem().getInteger(R.integer.default_port));
+			// TODO 点击事件
+		});
 	}
 
 	private void initSwipeRefresh()

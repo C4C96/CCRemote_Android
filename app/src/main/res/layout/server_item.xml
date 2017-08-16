@@ -2,17 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			  android:orientation="horizontal"
 			  android:layout_width="match_parent"
-			  android:layout_height="wrap_content">
-	<TextView
-		android:id="@+id/ServerItem_HostName_Text"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"/>
-	<TextView
-		android:id="@+id/ServerItem_IP_Text"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"/>
+			  android:layout_height="wrap_content"
+			  android:layout_margin="15dp">
+
+	<ImageView
+		android:src="@mipmap/ic_launcher"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"/>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<TextView
+			android:id="@+id/ServerItem_HostName_Text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:textSize="30sp"
+			android:text="Default Host Name"
+			android:maxLength="26"/>
+		<TextView
+			android:id="@+id/ServerItem_IP_Text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:textSize="18sp"
+			android:text="111.111.111.111"/>
+	</LinearLayout>
+
 </LinearLayout>
