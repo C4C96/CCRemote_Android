@@ -24,14 +24,14 @@ public class ScanServerTool
 	/**
 	 * 	扫描局域网内的服务器，异步方法
 	 * */
-	public static void  scan(List<Server> serverList)
+	public static void scan(List<Server> serverList)
 	{
 		Log.d(TAG, "scan");
 		WifiManager wifiManager = (WifiManager) MyApplication.getContext().getSystemService(Context.WIFI_SERVICE);
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		int ip = wifiInfo.getIpAddress(); //获得的ip是按ip地址的第4~1字节存储的
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
-		int port = preferences.getInt("port", Resources.getSystem().getInteger(R.integer.default_port));
+		int port = preferences.getInt("port", 2333/* Resources.getSystem().getInteger(R.integer.default_port)*/);//TODO
 		serverList.clear();
 
 		DatagramSocket socket = null;

@@ -4,7 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.locks.ReentrantLock;
+
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 public class SocketUtil
 {
@@ -12,14 +17,16 @@ public class SocketUtil
 
 	private String mAddress;
 	private int mPort;
+
 	private Socket mSocket;
+	private InputStream mIn;
+	private OutputStream mOut;
 
-	private int mRetryDelay = 500;// 失败重连的间隔
-	private int mRetryCount = 5;// 失败重连的次数，小于等于0则一直重试直到成功
-	private boolean mHasFailed = false;
+	private int mRetryDelay = 200;// 失败重连的间隔
+	private int mRetryCount = 3;// 失败重连的次数，小于等于0则一直重试直到成功
 
-	private int mBufferSize = 4096;
-	private Thread mReceiveThread;
+	private int mBufferSize = 1024;
+	private ReceiveThread mReceiveThread;
 
 	private OnConnectFailedListener mOnConnectFailedListener;
 	private OnMsgReceiveListener mOnMsgReceiveListener;
@@ -28,140 +35,164 @@ public class SocketUtil
 	{
 		mAddress = address;
 		mPort = port;
-
-		mReceiveThread = new Thread(new Receive());
-		mReceiveThread.start();
 	}
 
-	private boolean connect()
+	private ReentrantLock lock = new ReentrantLock();
+	private boolean connection_result;
+	private boolean reconnect()
 	{
-		if (mHasFailed) return false;
-
-		synchronized (mSocket)
+		//只允许一个线程进行重连
+		if (lock.tryLock())
 		{
+			close();
 			int count = mRetryCount;
-			while ((mSocket == null || mSocket.isClosed()) && (mRetryCount <= 0 || count-- > 0))
+			while ((mSocket == null || !mSocket.isConnected() || mSocket.isClosed()) && (mRetryCount <= 0 || count-- > 0))
 			{
 				try
 				{
-					mSocket = new Socket(mAddress, mPort);
-				} catch (IOException e)
+					//mSocket = new Socket(mAddress, mPort);
+					mSocket = new Socket();
+					mSocket.connect(new InetSocketAddress(mAddress, mPort), mRetryDelay);
+					mIn = mSocket.getInputStream();
+					mOut = mSocket.getOutputStream();
+					mReceiveThread = new ReceiveThread();
+					mReceiveThread.start();
+				}
+				catch (IOException e)
 				{
 					Log.e(TAG, e.getMessage());
-					try
-					{
-						Thread.sleep(mRetryDelay);
-					} catch (InterruptedException e1)
-					{
-						e1.printStackTrace();
-					}
 				}
 			}
-			if (mSocket != null && !mSocket.isClosed())
-				return true;
-			else
+			connection_result = mSocket != null && mSocket.isConnected() && !mSocket.isClosed();
+			if (!connection_result)
 			{
 				Log.e(TAG, "Fail to connect to " + mAddress + ":" + mPort);
-				mHasFailed = true;
+				close();
 				if (mOnConnectFailedListener != null)
-					mOnConnectFailedListener.onConnectFailed();
-				return false;
+					mOnConnectFailedListener.onConnectFailed(this);
 			}
+			lock.unlock();
+			return connection_result;
 		}
+		else//被阻塞的线程等结果就行
+		{
+			while(lock.isLocked());
+			return connection_result;
+		}
+	}
+
+	public void connect()
+	{
+		new Thread(this::reconnect).start();
 	}
 
 	public void send(byte[] data)
 	{
+		//TODO 改用线程池
 		new Thread(()->
 		{
-			if (!connect())	return;
-			OutputStream out = null;
-			try
+			while (true)
 			{
-				out = mSocket.getOutputStream();
-				out.write(data);
-				out.flush();
-			}
-			catch (IOException e)
-			{
-				Log.e(TAG, e.getMessage());
-			}
-			finally
-			{
-				if (out != null)
+				if (mOut != null)
 					try
 					{
-						out.close();
+						mOut.write(data);
+						mOut.flush();
+						break;
 					}
 					catch (IOException e)
 					{
 						e.printStackTrace();
+						if (!reconnect())
+							break;
 					}
+				else if (!reconnect())
+					break;
 			}
 		}).start();
 	}
 
-	private class Receive implements Runnable
+	private class ReceiveThread extends Thread
 	{
+		private boolean exit = false;
+
+		public void exit(){exit = true;}
+
 		@Override
 		public void run()
 		{
-			InputStream in = null;
 			int length;
 			byte[] buffer = new byte[mBufferSize];
-			while (connect())
+			while (!exit)
 			{
-				try
-				{
-					in = mSocket.getInputStream();
-					ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-					while((length = in.read(buffer)) != -1)
+				if (mIn != null)
+					try
 					{
-						byteArray.write(buffer, 0, length);
-					}
-					if (mOnMsgReceiveListener != null)
-						mOnMsgReceiveListener.onMsgReceive(byteArray.toByteArray());
-				}
-				catch (IOException e)
-				{
-					Log.e(TAG, e.getMessage());
-				}
-				finally
-				{
-					if (in != null)
-						try
+						ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+						while((length = mIn.read(buffer)) != -1)
 						{
-							in.close();
-						} catch (IOException e)
-						{
-							e.printStackTrace();
+							byteArray.write(buffer, 0, length);
 						}
-				}
+						if (mOnMsgReceiveListener != null)
+							new Thread(()->mOnMsgReceiveListener.onMsgReceive(byteArray.toByteArray())).start();//TODO 用线程池
+					}
+					catch (IOException e)
+					{
+						Log.e(TAG, e.getMessage());
+						exit = true;//只要出错了该线程就退出，reconnect的时候会新开一个
+						reconnect();
+					}
+				else
+					break;
 			}
 		}
 	}
 
-	public void close()
+	public synchronized void close()
 	{
-		mHasFailed = true;
+		if (mReceiveThread != null)
+		{
+			mReceiveThread.exit();
+			mReceiveThread = null;
+		}
+		if (mIn != null)
+		{
+			try
+			{
+				mIn.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			mIn = null;
+		}
+		if (mOut != null)
+		{
+			try
+			{
+				mOut.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			mOut = null;
+		}
 		if (mSocket != null)
 		{
-			if (!mSocket.isClosed())
-				try
-				{
-					mSocket.close();
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+			try
+			{
+				mSocket.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 			mSocket = null;
 		}
 	}
 
 	public interface OnConnectFailedListener
 	{
-		void onConnectFailed();
+		void onConnectFailed(SocketUtil socketUtil);
 	}
 
 	public interface OnMsgReceiveListener
@@ -189,7 +220,7 @@ public class SocketUtil
 		mOnConnectFailedListener = onConnectFailedListener;
 	}
 
-	public void setmOnMsgReceiveListener(OnMsgReceiveListener onMsgReceiveListener)
+	public void setOnMsgReceiveListener(OnMsgReceiveListener onMsgReceiveListener)
 	{
 		mOnMsgReceiveListener = onMsgReceiveListener;
 	}
@@ -212,11 +243,6 @@ public class SocketUtil
 	public int getRetryCount()
 	{
 		return mRetryCount;
-	}
-
-	public boolean getHasFailed()
-	{
-		return mHasFailed;
 	}
 
 	public int getBufferSize()

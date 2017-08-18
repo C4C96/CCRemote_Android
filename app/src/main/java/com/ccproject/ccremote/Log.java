@@ -23,7 +23,8 @@ public class Log
 	public static void d(String tag, String msg)
 	{
 		if (level <= DEBUG)
-			android.util.Log.d(tag, msg);
+			//android.util.Log.d(tag, msg);
+			android.util.Log.wtf(tag, msg);
 	}
 
 	public static void i(String tag, String msg)
@@ -41,7 +42,8 @@ public class Log
 	public static void e(String tag, String msg)
 	{
 		if (level <= ERROR)
-			android.util.Log.e(tag, msg);
+			//android.util.Log.e(tag, msg);
+			android.util.Log.wtf(tag, msg);
 	}
 }
 
