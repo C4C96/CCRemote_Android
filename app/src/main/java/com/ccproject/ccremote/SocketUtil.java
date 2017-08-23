@@ -132,7 +132,7 @@ public class SocketUtil
 					{
 						byte[] bytes = mBufferedReader.readLine().getBytes();
 						if (mOnMsgReceiveListener != null)
-							new Thread(() -> mOnMsgReceiveListener.onMsgReceive(bytes)).start();//TODO 用线程池
+							mThreadPool.execute(() -> mOnMsgReceiveListener.onMsgReceive(bytes));
 					} catch (IOException e)
 					{
 						Log.e(TAG, e.getMessage());
