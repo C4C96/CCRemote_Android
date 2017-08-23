@@ -1,6 +1,13 @@
 <resources>
 	<string name="app_name">CCRemote</string>
 
-	<string name="port">端口</string>
+	<string name="ConnectionActivity_title">选择一个服务端</string>
+
+	<string name="Settings">设置</string>
+	<string name="UserManual">使用帮助</string>
+	<string name="About">关于</string>
+
+	<string name="Port">端口</string>
+	<string name="CheckUpdate">检查更新</string>
 
 </resources>

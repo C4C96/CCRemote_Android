@@ -2,29 +2,22 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:orientation="vertical"
+	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_width="match_parent">
+	android:orientation="vertical">
 
 	<android.support.v7.widget.Toolbar
-		android:id="@+id/Connection_Toolbar"
+		android:id="@+id/Preference_Toolbar"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
 		android:background="?attr/colorPrimary"
 		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-		app:title="@string/ConnectionActivity_title"/>
+		app:title="@string/Settings"/>
 
-	<android.support.v4.widget.SwipeRefreshLayout
-		android:id="@+id/Connection_SwipeRefresh"
+	<FrameLayout
+		android:id="@+id/Preference_Fragment"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-
-		<android.support.v7.widget.RecyclerView
-			android:id="@+id/Connection_RecyclerView"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent" />
-
-	</android.support.v4.widget.SwipeRefreshLayout>
+		android:layout_height="match_parent"/>
 
 </LinearLayout>

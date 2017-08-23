@@ -1,26 +1,22 @@
 package com.ccproject.ccremote;
 
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
-public class MyPreferenceActivity extends PreferenceActivity
+public class MyPreferenceActivity extends BaseActivity
 {
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
-	}
+		setContentView(R.layout.activity_my_preference);
 
-	public static class MyPreferenceFragment extends PreferenceFragment
-	{
-		@Override
-		public void onCreate(final Bundle savedInstanceState)
-		{
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.preference_screen);
-		}
+		Toolbar toolbar = (Toolbar)findViewById(R.id.Preference_Toolbar);
+		setSupportActionBar(toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		getFragmentManager().beginTransaction().replace(R.id.Preference_Fragment, new MyPreferenceFragment()).commit();
 	}
 
 }

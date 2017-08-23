@@ -1,23 +1,19 @@
 package com.ccproject.ccremote;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 
 public class MainActivity extends BaseActivity
 {
-	Socket socket = null;
-	InputStream in;
-	OutputStream out;
+	SocketUtil mSocketUtil = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -28,102 +24,57 @@ public class MainActivity extends BaseActivity
 		TextView receive = (TextView) findViewById(R.id.main_receive);
 		EditText send = (EditText) findViewById(R.id.main_send);
 
-		SocketUtil socketUtil = new SocketUtil("192.168.2.110", 2333);
-		socketUtil.setOnConnectFailedListener(socketUtil1 ->
-		{
-			runOnUiThread(()-> Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show());
-		});
-		socketUtil.setOnMsgReceiveListener(bytes ->
-		{
-			runOnUiThread(() -> {
+		Intent intent  = getIntent();
+		String ip = intent.getStringExtra("ip");
+		int port = intent.getIntExtra("port", -1);
+
+		mSocketUtil = new SocketUtil(ip, port);
+		mSocketUtil.connect();
+		mSocketUtil.setOnDisconnectListener(socketUtil1 ->
+			runOnUiThread(() ->
+			{
+				Log.d(TAG, "Disconnected.");
+				Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show();
+				MainActivity.this.finish();
+			}));
+		mSocketUtil.setOnMsgReceiveListener(bytes ->
+			runOnUiThread(() ->
+			{
 				try
 				{
-					receive.setText(new String(bytes, "UTF-8"));
+					receive.setText("\""+new String(bytes, "UTF-8")+"\"");
 				} catch (UnsupportedEncodingException e)
 				{
 					e.printStackTrace();
 				}
-			});
-		});
-		((Button)findViewById(R.id.button_connect)).setOnClickListener((view)->
-		{
-			socketUtil.connect();
-		});
-		((Button)findViewById(R.id.button_send)).setOnClickListener((view)->
+			}));
+		((Button) findViewById(R.id.button_send)).setOnClickListener((view) ->
 		{
 			try
 			{
-				socketUtil.send(send.getText().toString().getBytes("UTF-8"));
+				mSocketUtil.send(send.getText().toString().getBytes("UTF-8"));
 			}
 			catch (UnsupportedEncodingException e)
 			{
 				e.printStackTrace();
 			}
 		});
+	}
 
-/*		Thread receiveThread = new Thread(()->
-		{
-			while(true)
-			{
-				if (socket == null) continue;
-				if (socket.isClosed()) break;
+	@Override
+	protected void onDestroy()
+	{
+		if (mSocketUtil != null)
+			mSocketUtil.close();
 
-				try
-				{
-					byte[] buffer = new byte[1024];
-					int length = in.read(buffer);
-					runOnUiThread(() -> {
-						try
-						{
-							receive.setText(new String(buffer, 0, length, "UTF-8"));
-						}
-						catch (UnsupportedEncodingException e)
-						{
-							e.printStackTrace();
-						}
-					});
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-		((Button)findViewById(R.id.button_connect)).setOnClickListener((view)->
-		{
-			new Thread(()->
-			{
-				try
-				{
-					socket = new Socket("192.168.2.110", 2333);
-					in = socket.getInputStream();
-					out = socket.getOutputStream();
-					receiveThread.start();
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-					Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
-				}
-			}).start();
-		});
-		((Button)findViewById(R.id.button_send)).setOnClickListener((view)->
-		{
-			if (socket == null) return;
-			new Thread(()->
-			{
-				try
-				{
-					out.write(send.getText().toString().getBytes("UTF-8"));
-					out.flush();
-					runOnUiThread(()->send.setText(""));
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}).start();
+		super.onDestroy();
+	}
 
-		});*/
+	public static void actionStart(Context context, String ip, int port)
+	{
+		Intent intent = new Intent(context, MainActivity.class);
+		intent.putExtra("ip", ip);
+		intent.putExtra("port", port);
+		context.startActivity(intent);
 	}
 }

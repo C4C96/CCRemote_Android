@@ -5,9 +5,12 @@
 
 	<EditTextPreference
 		android:key="port"
-		android:title="@string/port"
-		android:dialogTitle="@string/port"
+		android:title="@string/Port"
+		android:dialogTitle="@string/Port"
 		android:inputType="numberDecimal"
 		android:defaultValue="@integer/default_port"/>
+
+	<Preference android:key="check_update"
+				android:title="@string/CheckUpdate"/>
 
 </PreferenceScreen>

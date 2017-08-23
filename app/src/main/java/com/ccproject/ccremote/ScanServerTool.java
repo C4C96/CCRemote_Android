@@ -2,10 +2,10 @@ package com.ccproject.ccremote;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -31,7 +31,7 @@ public class ScanServerTool
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		int ip = wifiInfo.getIpAddress(); //获得的ip是按ip地址的第4~1字节存储的
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
-		int port = preferences.getInt("port", 2333/* Resources.getSystem().getInteger(R.integer.default_port)*/);//TODO
+		int port = Integer.valueOf(preferences.getString("port", ""+Constants.DEFAULT_PORT));
 		serverList.clear();
 
 		DatagramSocket socket = null;

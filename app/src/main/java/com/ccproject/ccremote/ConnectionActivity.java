@@ -1,16 +1,17 @@
 package com.ccproject.ccremote;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
@@ -26,12 +27,47 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_connection);
 
+		Toolbar toolbar = (Toolbar) findViewById(R.id.Connection_Toolbar);
+		setSupportActionBar(toolbar);
+
 		initRecycleView();
 		initSwipeRefresh();
+	}
 
-		//初次刷新
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
 		swipeRefresh.setRefreshing(true);
 		onRefresh();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.connection_toolbar, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.connection_options_settings:
+				Intent intent = new Intent(this, MyPreferenceActivity.class);
+				startActivity(intent);
+				break;
+			case R.id.connection_options_user_manual:
+				//TODO
+				break;
+			case R.id.connection_options_about:
+				//TODO
+				break;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	private void initRecycleView()
@@ -46,8 +82,8 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 		{
 			Log.d(TAG, "Server("+server.getIp()+") is clicked");
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ConnectionActivity.this);
-			int port = preferences.getInt("port", Resources.getSystem().getInteger(R.integer.default_port));
-			// TODO 点击事件
+			int port = Integer.valueOf(preferences.getString("port", ""+Constants.DEFAULT_PORT));
+			MainActivity.actionStart(ConnectionActivity.this, server.getIp(), port);
 		});
 	}
 

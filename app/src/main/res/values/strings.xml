@@ -1,6 +1,16 @@
 <resources>
 	<string name="app_name">CCRemote</string>
 
-	<string name="port">Port</string>
+	<string name="ConnectionActivity_title">Select a server</string>
+
+	<string name="Settings">Settings</string>
+	<string name="UserManual">User Manual</string>
+	<string name="About">About</string>
+
+	<string name="Port">Port</string>
+	<string name="CheckUpdate">Check Update</string>
+
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
