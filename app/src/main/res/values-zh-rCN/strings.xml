@@ -10,4 +10,6 @@
 	<string name="Port">端口</string>
 	<string name="CheckUpdate">检查更新</string>
 
+	<string name="PortRangeError">端口应在1024与65535之间</string>
+
 </resources>

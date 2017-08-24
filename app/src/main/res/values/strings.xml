@@ -10,4 +10,6 @@
 	<string name="Port">Port</string>
 	<string name="CheckUpdate">Check Update</string>
 
+	<string name="PortRangeError">Port should be between 1024 and 65535</string>
+
 </resources>

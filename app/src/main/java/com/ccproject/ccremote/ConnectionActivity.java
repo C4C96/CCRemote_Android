@@ -59,10 +59,10 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 				startActivity(intent);
 				break;
 			case R.id.connection_options_user_manual:
-				//TODO
+				//TODO 显示使用说明，可弹网页
 				break;
 			case R.id.connection_options_about:
-				//TODO
+				//TODO 显示关于，版权，balabala……
 				break;
 			default:
 				return super.onOptionsItemSelected(item);
