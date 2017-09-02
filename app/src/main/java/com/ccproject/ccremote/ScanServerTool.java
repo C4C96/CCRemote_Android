@@ -53,12 +53,12 @@ public class ScanServerTool
 					socket.receive(receivePacket);
 					String receiveMsg = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
 					Log.v(TAG, "Receive UDP Message: " + receiveMsg);
-					if (receiveMsg.equals(DISCOVER_RESPONSE))
+					if (receiveMsg.substring(0, DISCOVER_RESPONSE.length()).equals(DISCOVER_RESPONSE))
 					{
 						InetAddress address = receivePacket.getAddress();
 						byte[] ipBytes = address.getAddress();
 						String ipStr = (ipBytes[0]&0xFF)+"."+(ipBytes[1]&0xFF)+"."+(ipBytes[2]&0xFF)+"."+(ipBytes[3]&0xFF);
-						serverList.add(new Server(ipStr, address.getHostName()));
+						serverList.add(new Server(ipStr, receiveMsg.substring(DISCOVER_RESPONSE.length())));
 					}
 				}
 			}

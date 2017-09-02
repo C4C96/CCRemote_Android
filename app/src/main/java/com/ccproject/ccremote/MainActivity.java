@@ -10,6 +10,8 @@ import android.widget.Toast;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class MainActivity extends BaseActivity
 {
@@ -42,7 +44,20 @@ public class MainActivity extends BaseActivity
 			{
 				try
 				{
-					receive.setText("\""+new String(bytes, "UTF-8")+"\"");
+					byte[] data = Arrays.copyOfRange(bytes, 4, bytes.length);
+					String str = "";
+					while (data.length > 8)
+					{
+						int length = (data[4] << 24)
+									+ (data[5] << 16)
+									+ (data[6] << 8)
+									+ data[7];
+						byte[] pathBytes = Arrays.copyOfRange(data, 8, length + 8);
+						str += new String(pathBytes, "UTF-8");
+						str += "\n";
+						data = Arrays.copyOfRange(data, length + 8, data.length);
+						receive.setText(str);
+					}
 				} catch (UnsupportedEncodingException e)
 				{
 					e.printStackTrace();
@@ -52,7 +67,15 @@ public class MainActivity extends BaseActivity
 		{
 			try
 			{
-				mSocketUtil.send(send.getText().toString().getBytes("UTF-8"));
+				byte[] pathBytes = send.getText().toString().getBytes("UTF-8");
+				byte[] sendBytes = new byte[pathBytes.length + 4];
+				sendBytes[0] = 233 >> 24;
+				sendBytes[1] = 233 >> 16;
+				sendBytes[2] = 233 >> 8;
+				sendBytes[3] = (byte)233;
+				for(int i = 4; i < sendBytes.length; i++)
+					sendBytes[i] = pathBytes[i - 4];
+				mSocketUtil.send(sendBytes);
 			}
 			catch (UnsupportedEncodingException e)
 			{
@@ -65,7 +88,7 @@ public class MainActivity extends BaseActivity
 	protected void onDestroy()
 	{
 		if (mSocketUtil != null)
-			mSocketUtil.close();
+			mSocketUtil.disconnect();
 
 		super.onDestroy();
 	}
