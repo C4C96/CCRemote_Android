@@ -1,4 +1,4 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.connection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,6 +6,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.ccproject.ccremote.Constants;
+import com.ccproject.ccremote.MyApplication;
+import com.ccproject.ccremote.item.Server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -31,7 +35,7 @@ public class ScanServerTool
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		int ip = wifiInfo.getIpAddress(); //获得的ip是按ip地址的第4~1字节存储的
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
-		int port = Integer.valueOf(preferences.getString("port", ""+Constants.DEFAULT_PORT));
+		int port = Integer.valueOf(preferences.getString("port", ""+ Constants.DEFAULT_PORT));
 		serverList.clear();
 
 		DatagramSocket socket = null;

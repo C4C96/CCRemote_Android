@@ -1,4 +1,4 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,14 +12,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ccproject.ccremote.Constants;
+import com.ccproject.ccremote.R;
+import com.ccproject.ccremote.adapter.ServerAdapter;
+import com.ccproject.ccremote.connection.ScanServerTool;
+import com.ccproject.ccremote.item.Server;
+
 import java.util.List;
 import java.util.Vector;
 
 public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener
 {
 	private List<Server> mServerList;
-	private ServerAdapter adapter;
-	private SwipeRefreshLayout swipeRefresh;
+	private ServerAdapter mAdapter;
+	private SwipeRefreshLayout mSwipeRefresh;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -38,7 +44,7 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 	protected void onResume()
 	{
 		super.onResume();
-		swipeRefresh.setRefreshing(true);
+		mSwipeRefresh.setRefreshing(true);
 		onRefresh();
 	}
 
@@ -76,22 +82,22 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.Connection_RecyclerView);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
-		adapter = new ServerAdapter(mServerList);
-		recyclerView.setAdapter(adapter);
-		adapter.setOnItemClickListener((server)->
+		mAdapter = new ServerAdapter(mServerList);
+		recyclerView.setAdapter(mAdapter);
+		mAdapter.setOnItemClickListener((server)->
 		{
 			Log.d(TAG, "Server("+server.getIp()+") is clicked");
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ConnectionActivity.this);
-			int port = Integer.valueOf(preferences.getString("port", ""+Constants.DEFAULT_PORT));
+			int port = Integer.valueOf(preferences.getString("port", ""+ Constants.DEFAULT_PORT));
 			MainActivity.actionStart(ConnectionActivity.this, server.getIp(), port);
 		});
 	}
 
 	private void initSwipeRefresh()
 	{
-		swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.Connection_SwipeRefresh);
-		swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-		swipeRefresh.setOnRefreshListener(this);
+		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.Connection_SwipeRefresh);
+		mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+		mSwipeRefresh.setOnRefreshListener(this);
 	}
 
 	@Override
@@ -102,8 +108,8 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 			ScanServerTool.scan(mServerList);
 			runOnUiThread(()->
 			{
-				adapter.notifyDataSetChanged();
-				swipeRefresh.setRefreshing(false);
+				mAdapter.notifyDataSetChanged();
+				mSwipeRefresh.setRefreshing(false);
 			});
 		}).start();
 	}

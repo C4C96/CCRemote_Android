@@ -1,10 +1,13 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.fragment;
 
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.widget.Toast;
+
+import com.ccproject.ccremote.MyApplication;
+import com.ccproject.ccremote.R;
 
 public class MyPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener
 {

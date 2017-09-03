@@ -1,21 +1,15 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.util.Log;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import com.ccproject.ccremote.R;
+import com.ccproject.ccremote.connection.LocalServer;
 
 public class MainActivity extends BaseActivity
 {
-	SocketUtil mSocketUtil = null;
+/*	SocketUtil mSocketUtil = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -82,14 +76,35 @@ public class MainActivity extends BaseActivity
 				e.printStackTrace();
 			}
 		});
+	}*/
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		Intent intent  = getIntent();
+		String ip = intent.getStringExtra("ip");
+		int port = intent.getIntExtra("port", -1);
+
+		if (myApplication.mLocalServer != null)
+			myApplication.mLocalServer.disconnect();
+		myApplication.mLocalServer = new LocalServer(ip, port);
+
+		findViewById(R.id.TEMP_BUTTON).setOnClickListener((v)->
+		{
+			ExplorerActivity.actionStart(this);
+		});
 	}
 
 	@Override
 	protected void onDestroy()
 	{
-		if (mSocketUtil != null)
-			mSocketUtil.disconnect();
-
+		/*if (mSocketUtil != null)
+			mSocketUtil.disconnect();*/
+		if (myApplication.mLocalServer != null)
+			myApplication.mLocalServer.disconnect();
 		super.onDestroy();
 	}
 

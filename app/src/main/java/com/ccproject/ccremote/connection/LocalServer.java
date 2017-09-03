@@ -1,13 +1,20 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.connection;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
+import android.widget.Toast;
+
+import com.ccproject.ccremote.Tools;
+import com.ccproject.ccremote.activity.BaseActivity;
+import com.ccproject.ccremote.activity.ConnectionActivity;
+import com.ccproject.ccremote.MyApplication;
+import com.ccproject.ccremote.R;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
-
-public class LocalServer implements SocketUtil.OnMsgReceiveListener
+public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.OnDisconnectListener
 {
 	private SocketUtil mSocketUtil;
 
@@ -15,16 +22,14 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener
 
 	private SparseArray<ResponseHandle> mResponseHandles = new SparseArray<>();
 
+	public static final int GET_FILE_SYSTEM_ENTRIES = 233;
+
 	public LocalServer(String ip, int port)
 	{
 		mSocketUtil = new SocketUtil(ip, port);
 		mSocketUtil.setOnMsgReceiveListener(this);
+		mSocketUtil.setOnDisconnectListener(this);
 		mSocketUtil.connect();
-	}
-
-	public void setOnDisconnectListener(SocketUtil.OnDisconnectListener onDisconnectListener)
-	{
-		mSocketUtil.setOnDisconnectListener(onDisconnectListener);
 	}
 
 	private final Object sendLock = new Object();
@@ -42,14 +47,8 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener
 		{
 			number = mCount++;
 		}
-		bytes.write(number >> 24);
-		bytes.write(number >> 16);
-		bytes.write(number >> 8);
-		bytes.write(number);
-		bytes.write(head >> 24);
-		bytes.write(head >> 16);
-		bytes.write(head >> 8);
-		bytes.write(head);
+		Tools.writeInt(bytes, number);
+		Tools.writeInt(bytes, head);
 		bytes.write(body, 0, body.length);
 		mSocketUtil.send(bytes.toByteArray());
 		return number;
@@ -57,8 +56,13 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener
 
 	public void sendForResponse(int head, @NonNull byte[] body, @NonNull ResponseHandle responseHandle)
 	{
-		int count = send(head, body);
-		mResponseHandles.append(count, responseHandle);
+		int number = send(head, body);
+		mResponseHandles.append(number, responseHandle);
+	}
+
+	public void disconnect()
+	{
+		mSocketUtil.disconnect();
 	}
 
 	/**
@@ -70,15 +74,20 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener
 	public void onMsgReceive(byte[] msg)
 	{
 		if (msg.length < 4) return;
-		int number = (msg[0] << 24)
-					+ (msg[1] << 16)
-					+ (msg[2] << 8)
-					+ msg[3];
+		int number = Tools.getInt(msg);
 		ResponseHandle responseHandle = mResponseHandles.get(number);
 		if (responseHandle == null) return;
 		byte[] body = Arrays.copyOfRange(msg, 4, msg.length);
 		responseHandle.handle(body);
 		mResponseHandles.remove(number);
+	}
+
+
+	@Override
+	public void onConnectFailed(SocketUtil socketUtil)
+	{
+		BaseActivity.finishAllExcept(ConnectionActivity.class);
+		Toast.makeText(MyApplication.getContext(), Resources.getSystem().getString(R.string.Disconnected), Toast.LENGTH_SHORT).show();
 	}
 
 	public interface ResponseHandle

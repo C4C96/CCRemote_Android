@@ -1,4 +1,4 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.item;
 
 public class Server
 {

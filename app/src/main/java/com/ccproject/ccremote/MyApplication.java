@@ -3,23 +3,23 @@ package com.ccproject.ccremote;
 import android.app.Application;
 import android.content.Context;
 
-import java.net.Socket;
+import com.ccproject.ccremote.connection.LocalServer;
 
 public class MyApplication extends Application
 {
-	private static Context context;
+	private static Context mContext;
 
-	public Socket socket;
+	public LocalServer mLocalServer;
 
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
-		context = getApplicationContext();
+		mContext = getApplicationContext();
 	}
 
 	public static Context getContext()
 	{
-		return context;
+		return mContext;
 	}
 }

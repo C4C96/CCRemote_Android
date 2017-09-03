@@ -1,21 +1,18 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.connection;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.util.Log;
+
+import com.ccproject.ccremote.Tools;
 
 public class SocketUtil
 {
@@ -108,10 +105,7 @@ public class SocketUtil
 					{
 						int size = data.length + 4;
 						ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-						bytes.write(size >> 24);
-						bytes.write(size >> 16);
-						bytes.write(size >> 8);
-						bytes.write(size);
+						Tools.writeInt(bytes, size);
 						bytes.write(data, 0, data.length);
 						mOut.write(/*data*/bytes.toByteArray());
 						mOut.flush();
@@ -149,12 +143,9 @@ public class SocketUtil
 						int count = mIn.read(buffer);
 						if (count < 4) continue;
 						// 前4个字节表示消息长度
-						int length = (buffer[0] << 24)
-									+ (buffer[1] << 16)
-									+ (buffer[2] << 8)
-									+ buffer[3];
+						int length = Tools.getInt(buffer);
 						ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-						bytes.write(buffer, 4, buffer.length - 4);
+						bytes.write(buffer, 4, count - 4);
 						int remainLength = length - count;
 						while (remainLength > 0)
 						{

@@ -2,6 +2,7 @@
 	<string name="app_name">CCRemote</string>
 
 	<string name="ConnectionActivity_title">选择一个服务端</string>
+	<string name="ExplorerActivity_title">文件浏览</string>
 
 	<string name="Settings">设置</string>
 	<string name="UserManual">使用帮助</string>
@@ -11,5 +12,7 @@
 	<string name="CheckUpdate">检查更新</string>
 
 	<string name="PortRangeError">端口应在1024与65535之间</string>
+
+	<string name="Disconnected">连接中断</string>
 
 </resources>

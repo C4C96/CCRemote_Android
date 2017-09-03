@@ -2,6 +2,7 @@
 	<string name="app_name">CCRemote</string>
 
 	<string name="ConnectionActivity_title">Select a server</string>
+	<string name="ExplorerActivity_title">File Explorer</string>
 
 	<string name="Settings">Settings</string>
 	<string name="UserManual">User Manual</string>
@@ -11,5 +12,7 @@
 	<string name="CheckUpdate">Check Update</string>
 
 	<string name="PortRangeError">Port should be between 1024 and 65535</string>
+
+	<string name="Disconnected">Disconnected</string>
 
 </resources>

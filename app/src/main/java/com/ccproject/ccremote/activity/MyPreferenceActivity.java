@@ -1,8 +1,11 @@
-package com.ccproject.ccremote;
+package com.ccproject.ccremote.activity;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+
+import com.ccproject.ccremote.fragment.MyPreferenceFragment;
+import com.ccproject.ccremote.R;
 
 public class MyPreferenceActivity extends BaseActivity
 {
@@ -14,7 +17,9 @@ public class MyPreferenceActivity extends BaseActivity
 
 		Toolbar toolbar = (Toolbar)findViewById(R.id.Preference_Toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null)
+			actionBar.setDisplayHomeAsUpEnabled(true);
 
 		getFragmentManager().beginTransaction().replace(R.id.Preference_Fragment, new MyPreferenceFragment()).commit();
 	}
