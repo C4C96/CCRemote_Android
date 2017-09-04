@@ -2,10 +2,10 @@ package com.ccproject.ccremote.item;
 
 public class Disk extends FileSystemEntry
 {
-	public Disk(String path, int attribute, String label)
+	public Disk(String path, String label)
 	{
 		mPath = path;
-		mAttribute = attribute;
+		mAttribute = FileAttributes.System | FileAttributes.Hidden | FileAttributes.Directory;
 		mSimpleName = label + " (" +  path.toUpperCase().charAt(0) + ":)";
 		mExtension = "";
 	}

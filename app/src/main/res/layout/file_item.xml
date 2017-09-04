@@ -18,9 +18,9 @@
 		android:layout_height="match_parent"
 		android:layout_weight="1"
 		android:gravity="center_vertical"
-		android:textSize="22sp"
+		android:textSize="20sp"
 		android:layout_marginLeft="20dp"
 		android:textColor="#FF000000"
-		android:text="111.111.111.111"/>
+		android:text="DEFAULT_FILE_NAME"/>
 
 </LinearLayout>

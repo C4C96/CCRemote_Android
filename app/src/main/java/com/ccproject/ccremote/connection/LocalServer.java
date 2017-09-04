@@ -16,13 +16,14 @@ import java.util.Arrays;
 
 public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.OnDisconnectListener
 {
+	public static final int GET_FILE_SYSTEM_ENTRIES = 233;
+	public static final int GET_DISKS = 114514;
+
 	private SocketUtil mSocketUtil;
 
 	private int mCount = 0;
 
 	private SparseArray<ResponseHandle> mResponseHandles = new SparseArray<>();
-
-	public static final int GET_FILE_SYSTEM_ENTRIES = 233;
 
 	public LocalServer(String ip, int port)
 	{
