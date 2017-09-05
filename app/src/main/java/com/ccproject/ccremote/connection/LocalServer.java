@@ -87,7 +87,7 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 	@Override
 	public void onConnectFailed(SocketUtil socketUtil)
 	{
-		BaseActivity.finishAllExcept(ConnectionActivity.class);
+		BaseActivity.finishExceptConnectionActivity();
 		Toast.makeText(MyApplication.getContext(), Resources.getSystem().getString(R.string.Disconnected), Toast.LENGTH_SHORT).show();
 	}
 

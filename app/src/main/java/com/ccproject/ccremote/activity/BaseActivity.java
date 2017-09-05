@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.ccproject.ccremote.MyApplication;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +35,12 @@ public class BaseActivity extends AppCompatActivity
 		mActivityList.remove(this);
 	}
 
-	public static void finishAllExcept(Class<? extends BaseActivity> activityType)
-	{ // TODO 有问题
+	public static void finishExceptConnectionActivity()
+	{
+		// TODO 有问题
 		for (BaseActivity activity : mActivityList)
 		{
-			if (activityType == null || !activityType.isInstance(activity))
+			if (!(activity instanceof ConnectionActivity))
 			{
 				activity.finish();
 			}

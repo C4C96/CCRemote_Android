@@ -19,6 +19,7 @@ public class SocketUtil
 	private static final String TAG = SocketUtil.class.getSimpleName();
 
 	private static final int BUFFER_SIZE = 1024;
+	private static final int HEART_BEAT_DELAY = 2000;
 
 	private String mAddress;
 	private int mPort;
@@ -27,12 +28,13 @@ public class SocketUtil
 	private OutputStream mOut;
 	private InputStream mIn;
 
-	private int mRetryDelay = 200;// 失败重连的间隔
-	private int mRetryCount = 3;// 失败重连的次数，小于等于0则一直重试直到成功
+	private int mRetryDelay = 200; // 失败重连的间隔
+	private int mRetryCount = 3; // 失败重连的次数，小于等于0则一直重试直到成功
 
 	private boolean needToConnect = false;
 
 	private ReceiveThread mReceiveThread;
+	private HeartBeatThread mHeartBeatThread;
 
 	private OnDisconnectListener mOnDisconnectListener;
 	private OnMsgReceiveListener mOnMsgReceiveListener;
@@ -59,13 +61,15 @@ public class SocketUtil
 			{
 				try
 				{
-					//mSocket = new Socket(mAddress, mPort);
 					mSocket = new Socket();
 					mSocket.connect(new InetSocketAddress(mAddress, mPort), mRetryDelay);
 					mIn = mSocket.getInputStream();
 					mOut = mSocket.getOutputStream();
 					mReceiveThread = new ReceiveThread();
 					mReceiveThread.start();
+					mHeartBeatThread = new HeartBeatThread();
+					mHeartBeatThread.start();
+					receiveTime = System.currentTimeMillis();
 				} catch (IOException e)
 				{
 					Log.e(TAG, e.getMessage());
@@ -135,12 +139,14 @@ public class SocketUtil
 		public void run()
 		{
 			byte[] buffer = new byte[BUFFER_SIZE];
+
 			while (!exit)
 			{
 				if (mIn != null)
 					try
 					{
 						int count = mIn.read(buffer);
+						receiveTime = System.currentTimeMillis();
 						if (count < 4) continue;
 						// 前4个字节表示消息长度
 						int length = Tools.getInt(buffer);
@@ -168,12 +174,50 @@ public class SocketUtil
 		}
 	}
 
+	private long receiveTime;
+	private class HeartBeatThread extends Thread
+	{
+		private boolean exit = false;
+
+		public void exit()
+		{
+			exit = true;
+		}
+
+		@Override
+		public void run()
+		{
+			while (!exit)
+			{
+				long time = System.currentTimeMillis();
+				if (time >= receiveTime + HEART_BEAT_DELAY) // 若在一定时间内无消息，则断连
+				{
+					exit = true;
+					reconnect();
+				}
+				else
+					try
+					{
+						Thread.sleep(HEART_BEAT_DELAY - (time - receiveTime));
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+			}
+		}
+	}
+
 	private synchronized void close()
 	{
 		if (mReceiveThread != null)
 		{
 			mReceiveThread.exit();
 			mReceiveThread = null;
+		}
+		if (mHeartBeatThread != null)
+		{
+			mHeartBeatThread.exit();
+			mHeartBeatThread = null;
 		}
 		if (mIn != null)
 		{
