@@ -18,9 +18,11 @@
 		android:layout_height="match_parent"
 		android:layout_weight="1"
 		android:gravity="center_vertical"
-		android:textSize="20sp"
+		android:textSize="18sp"
 		android:layout_marginLeft="20dp"
 		android:textColor="#FF000000"
-		android:text="DEFAULT_FILE_NAME"/>
+		android:text="DEFAULT_FILE_NAME"
+		android:lines="1"
+		android:ellipsize="middle"/>
 
 </LinearLayout>

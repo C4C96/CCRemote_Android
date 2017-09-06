@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -70,6 +71,7 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		mRecyclerView.setLayoutManager(layoutManager);
 		mAdapter = new FileAdapter(mFileList);
 		mRecyclerView.setAdapter(mAdapter);
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 		mAdapter.setOnItemClickListener((file)->
 		{
 			if (file.isDirectory())

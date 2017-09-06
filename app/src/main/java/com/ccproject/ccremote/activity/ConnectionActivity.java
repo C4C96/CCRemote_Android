@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +27,7 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 	private List<Server> mServerList;
 	private ServerAdapter mAdapter;
 	private SwipeRefreshLayout mSwipeRefresh;
+	private RecyclerView mRecyclerView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -79,11 +81,12 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 	private void initRecycleView()
 	{
 		mServerList = new Vector<>();
-		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.Connection_RecyclerView);
+		mRecyclerView = (RecyclerView) findViewById(R.id.Connection_RecyclerView);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-		recyclerView.setLayoutManager(layoutManager);
+		mRecyclerView.setLayoutManager(layoutManager);
 		mAdapter = new ServerAdapter(mServerList);
-		recyclerView.setAdapter(mAdapter);
+		mRecyclerView.setAdapter(mAdapter);
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 		mAdapter.setOnItemClickListener((server)->
 		{
 			Log.d(TAG, "Server("+server.getIp()+") is clicked");
@@ -110,6 +113,7 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 			{
 				mAdapter.notifyDataSetChanged();
 				mSwipeRefresh.setRefreshing(false);
+				mRecyclerView.scrollToPosition(0);
 			});
 		}).start();
 	}

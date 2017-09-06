@@ -21,7 +21,8 @@
 			android:gravity="center"
 			android:textSize="30sp"
 			android:text="Default Host Name"
-			android:maxLength="26"/>
+			android:lines="1"
+			android:ellipsize="marquee" />
 		<TextView
 			android:id="@+id/ServerItem_IP_Text"
 			android:layout_width="match_parent"
