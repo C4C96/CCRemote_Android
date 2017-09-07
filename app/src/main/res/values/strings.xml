@@ -8,6 +8,11 @@
 	<string name="UserManual">User Manual</string>
 	<string name="About">About</string>
 
+	<string name="Copy">Copy</string>
+	<string name="Cut">Cut</string>
+	<string name="Paste">Paste</string>
+	<string name="Delete">Delete</string>
+
 	<string name="Port">Port</string>
 	<string name="CheckUpdate">Check Update</string>
 
