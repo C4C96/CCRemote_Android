@@ -18,6 +18,10 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 {
 	public static final int GET_FILE_SYSTEM_ENTRIES = 233;
 	public static final int GET_DISKS = 114514;
+	public static final int COPY_FILE = 7979;
+	public static final int CUT_FILE = 123;
+	public static final int PASTE_FILE = 1024;
+	public static final int DELETE_FILE = 321;
 
 	private SocketUtil mSocketUtil;
 
@@ -87,8 +91,11 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 	@Override
 	public void onConnectFailed(SocketUtil socketUtil)
 	{
-		BaseActivity.finishExceptConnectionActivity();
-		Toast.makeText(MyApplication.getContext(), Resources.getSystem().getString(R.string.Disconnected), Toast.LENGTH_SHORT).show();
+		BaseActivity.finishExcept(ConnectionActivity.class);
+		BaseActivity activity = BaseActivity.find(ConnectionActivity.class);
+		if (activity != null)
+			activity.runOnUiThread(()->
+					Toast.makeText(MyApplication.getContext(), MyApplication.getContext().getResources().getString(R.string.Disconnected), Toast.LENGTH_SHORT).show());
 	}
 
 	public interface ResponseHandle

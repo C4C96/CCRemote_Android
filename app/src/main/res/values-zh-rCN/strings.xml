@@ -1,6 +1,9 @@
 <resources>
 	<string name="app_name">CCRemote</string>
 
+	<string name="Yes">是</string>
+	<string name="No">否</string>
+
 	<string name="ConnectionActivity_title">选择一个服务端</string>
 	<string name="ExplorerActivity_title">文件浏览</string>
 
@@ -12,6 +15,9 @@
 	<string name="Cut">剪切</string>
 	<string name="Paste">粘贴</string>
 	<string name="Delete">删除</string>
+
+	<string name="DeleteConfirmTitle">确认</string>
+	<string name="DeleteConfirmMsg">这些文件将从你的电脑上删除，确定吗？</string>
 
 	<string name="Port">端口</string>
 	<string name="CheckUpdate">检查更新</string>

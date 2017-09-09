@@ -1,6 +1,9 @@
 <resources>
 	<string name="app_name">CCRemote</string>
 
+	<string name="Yes">Yes</string>
+	<string name="No">No</string>
+
 	<string name="ConnectionActivity_title">Select a server</string>
 	<string name="ExplorerActivity_title">File Explorer</string>
 
@@ -12,6 +15,9 @@
 	<string name="Cut">Cut</string>
 	<string name="Paste">Paste</string>
 	<string name="Delete">Delete</string>
+
+	<string name="DeleteConfirmTitle">Confirm</string>
+	<string name="DeleteConfirmMsg">You are going to delete these files on your PC. Are you sure?</string>
 
 	<string name="Port">Port</string>
 	<string name="CheckUpdate">Check Update</string>

@@ -31,4 +31,11 @@ public class Tools
 		bytes.write(i & 0xFF);
 	}
 
+	public static void writeString(ByteArrayOutputStream bytes, String string)
+	{
+		byte[] strBytes = string.getBytes();
+		writeInt(bytes, strBytes.length);
+		bytes.write(strBytes, 0, strBytes.length);
+	}
+
 }

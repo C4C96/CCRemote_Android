@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.ccproject.ccremote.Constants;
 import com.ccproject.ccremote.R;
 import com.ccproject.ccremote.adapter.ServerAdapter;
 import com.ccproject.ccremote.connection.ScanServerTool;
@@ -91,7 +90,7 @@ public class ConnectionActivity extends BaseActivity implements SwipeRefreshLayo
 		{
 			Log.d(TAG, "Server("+server.getIp()+") is clicked");
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ConnectionActivity.this);
-			int port = Integer.valueOf(preferences.getString("port", ""+ Constants.DEFAULT_PORT));
+			int port = Integer.valueOf(preferences.getString("port", ""+ getResources().getInteger(R.integer.default_port)));
 			MainActivity.actionStart(ConnectionActivity.this, server.getIp(), port);
 		});
 	}

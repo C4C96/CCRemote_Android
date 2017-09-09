@@ -35,16 +35,19 @@ public class BaseActivity extends AppCompatActivity
 		mActivityList.remove(this);
 	}
 
-	public static void finishExceptConnectionActivity()
+	public static void finishExcept(Class<?> type)
 	{
-		// TODO 有问题
 		for (BaseActivity activity : mActivityList)
-		{
-			if (!(activity instanceof ConnectionActivity))
-			{
+			if (type == null || !type.isInstance(activity))
 				activity.finish();
-			}
-		}
+	}
+
+	public static BaseActivity find(Class<?> type)
+	{
+		for (BaseActivity activity : mActivityList)
+			if (type.isInstance(activity))
+				return activity;
+		return null;
 	}
 
 	@Override
