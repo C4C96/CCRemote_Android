@@ -17,11 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ccproject.ccremote.R;
 import com.ccproject.ccremote.Tools;
 import com.ccproject.ccremote.adapter.FileAdapter;
 import com.ccproject.ccremote.connection.LocalServer;
+import com.ccproject.ccremote.fragment.NavigationFragment;
 import com.ccproject.ccremote.item.Disk;
 import com.ccproject.ccremote.item.FileSystemEntry;
 import com.goyourfly.multiple.adapter.MultipleAdapter;
@@ -39,22 +41,27 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.Vector;
 
-public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener
+public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationFragment.OnPathItemClickListener
 {
 	private List<FileSystemEntry> mFileList;
-	//private FileAdapter mAdapter;
 	private MultipleAdapter mAdapter;
+
+	private NavigationFragment mNavigationFragment;
 
 	private DrawerLayout mDrawerLayout;
 	private SwipeRefreshLayout mSwipeRefresh;
 	private RecyclerView mRecyclerView;
 
-	private Menu mMenu;
 	private MenuItem mPasteItem;
+	private MenuItem mBackItem;
 
+	private Stack<String> mPathStack;
 	private String mCurrentPath;
+
+	private static final String DESKTOP = "%DESKTOP%";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -63,6 +70,8 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		setContentView(R.layout.activity_explorer);
 
 		mCurrentPath = "";
+		mPathStack = new Stack<>();
+		mNavigationFragment = (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.Explorer_PathFragment);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.Explorer_Drawer);
 		initToolBar();
 		initRecycleView();
@@ -94,9 +103,8 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		{
 			if (file.isDirectory())
 			{
-				mCurrentPath = file.getPath();
 				mSwipeRefresh.setRefreshing(true);
-				onRefresh();
+				goToPath(file.getPath(), true);
 			}
 			else
 				;// TODO
@@ -104,7 +112,11 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		mAdapter = MultipleSelect
 				.with(this)
 				.adapter(adapter)
-				.decorateFactory(new CheckBoxFactory())
+				.decorateFactory(new CheckBoxFactory(
+						ContextCompat.getColor(ExplorerActivity.this, R.color.colorPrimary),
+						300,
+						Gravity.END | Gravity.CENTER_VERTICAL,
+						10))
 				.stateChangeListener(new MultiSelectStateChangeListener())
 				.customMenu(new MultiSelectMenuBar(this,
 						R.menu.explorer_multiselect,
@@ -126,8 +138,8 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		getMenuInflater().inflate(R.menu.explorer_toolbar, menu);
-		this.mMenu = menu;
 		mPasteItem = menu.findItem(R.id.explorer_toolbar_paste);
+		mBackItem = menu.findItem(R.id.explorer_toolbar_back);
 		return true;
 	}
 
@@ -140,7 +152,12 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 				mDrawerLayout.openDrawer(GravityCompat.START);
 				break;
 			case R.id.explorer_toolbar_paste:
-				myApplication.mLocalServer.send(LocalServer.PASTE_FILE, mCurrentPath.getBytes());
+				if (!mCurrentPath.equals(""))
+					myApplication.mLocalServer.send(LocalServer.PASTE_FILE, mCurrentPath.getBytes());
+				break;
+			case R.id.explorer_toolbar_back:
+				if (!mPathStack.empty())
+					goToPath(mPathStack.pop(), false);
 				break;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -148,26 +165,28 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		return true;
 	}
 
-	@Override
-	public void onRefresh()
+	private void goToPath(String path, boolean recognize)
 	{
 		new Thread(()->
 		{
-			if (mCurrentPath != null && !mCurrentPath.equals("")) // 获取目录信息
+			if (path != null && !path.equals("")) // 获取目录信息
 				myApplication.mLocalServer.sendForResponse(LocalServer.GET_FILE_SYSTEM_ENTRIES,
-											mCurrentPath.getBytes(), bytes->refreshList(bytes, false, true));
+						path.getBytes(), bytes-> goToPathCallBack(bytes, false, true, recognize));
 			else // 获取磁盘信息
 				myApplication.mLocalServer.sendForResponse(LocalServer.GET_DISKS,
-											new byte[]{},  bytes->refreshList(bytes, true, true));
+						new byte[]{},  bytes-> goToPathCallBack(bytes, true, true, recognize));
 		}).start();
 	}
 
-	private void refreshList(byte[] bytes, boolean isDisk, boolean scrollToFirst)
+	private void goToPathCallBack(byte[] bytes, boolean isDisk, boolean scrollToFirst, boolean recognize)
 	{
+		if (recognize)
+			mPathStack.add(mCurrentPath);
 		mFileList.clear();
 		int cursor = 0;
 		if (isDisk)
 		{
+			mCurrentPath = "";
 			while (cursor + 7 <= bytes.length)
 			{
 				try
@@ -187,11 +206,21 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		}
 		else
 		{
+			int length = Tools.getInt(bytes, cursor);
+			cursor += 4;
+			try
+			{
+				mCurrentPath = new String(Arrays.copyOfRange(bytes, cursor, cursor + length), "UTF-8");
+			} catch (UnsupportedEncodingException e)
+			{
+				e.printStackTrace();
+			}
+			cursor += length;
 			mFileList.add(FileSystemEntry.getUpperDirectory(mCurrentPath));
 			while (cursor + 8 <= bytes.length)
 			{
 				int attribute = Tools.getInt(bytes, cursor);
-				int length = Tools.getInt(bytes, cursor + 4);
+				length = Tools.getInt(bytes, cursor + 4);
 				cursor += 8;
 				if (cursor + length > bytes.length) break;
 				try
@@ -213,10 +242,25 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 			mAdapter.notifyDataSetChanged();
 			if (mPasteItem != null)
 				mPasteItem.setVisible(!mCurrentPath.equals(""));
+			if (mBackItem != null)
+				mBackItem.setVisible(!mPathStack.empty());
+			mNavigationFragment.changePath(mCurrentPath);
 			mSwipeRefresh.setRefreshing(false);
 			if (scrollToFirst)
 				mRecyclerView.scrollToPosition(0);
 		});
+	}
+
+	@Override
+	public void onRefresh()
+	{
+		goToPath(mCurrentPath, false);
+	}
+
+	@Override
+	public void onNavigationItemClick(String path)
+	{
+		goToPath(path, true);
 	}
 
 	private class MultiSelectStateChangeListener implements StateChangeListener
@@ -300,13 +344,22 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 		}
 	}
 
+	private long backPressedTime;
 	@Override
 	public void onBackPressed()
 	{
 		if (mAdapter.getShowState() != ViewState.INSTANCE.getDEFAULT())
 			mAdapter.cancel(true);
 		else
-			super.onBackPressed();
+		{
+			if (System.currentTimeMillis() < backPressedTime + 2000)
+				finish();
+			else
+			{
+				Toast.makeText(this, R.string.DoubleClickToQuit, Toast.LENGTH_SHORT).show();
+				backPressedTime = System.currentTimeMillis();
+			}
+		}
 	}
 
 	public static void actionStart(Context context)

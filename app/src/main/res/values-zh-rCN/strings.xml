@@ -15,9 +15,16 @@
 	<string name="Cut">剪切</string>
 	<string name="Paste">粘贴</string>
 	<string name="Delete">删除</string>
+	<string name="Back">返回</string>
+
+	<string name="RootDirectory">根目录</string>
+	<string name="Desktop">桌面</string>
+	<string name="This_PC">此电脑</string>
 
 	<string name="DeleteConfirmTitle">确认</string>
 	<string name="DeleteConfirmMsg">这些文件将从你的电脑上删除，确定吗？</string>
+
+	<string name="DoubleClickToQuit">再按一次退出</string>
 
 	<string name="Port">端口</string>
 	<string name="CheckUpdate">检查更新</string>

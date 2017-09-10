@@ -95,7 +95,7 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 		BaseActivity activity = BaseActivity.find(ConnectionActivity.class);
 		if (activity != null)
 			activity.runOnUiThread(()->
-					Toast.makeText(MyApplication.getContext(), MyApplication.getContext().getResources().getString(R.string.Disconnected), Toast.LENGTH_SHORT).show());
+					Toast.makeText(MyApplication.getContext(), R.string.Disconnected, Toast.LENGTH_SHORT).show());
 	}
 
 	public interface ResponseHandle

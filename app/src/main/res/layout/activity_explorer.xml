@@ -20,6 +20,14 @@
 			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 			app:title="@string/ExplorerActivity_title"/>
 
+		<fragment
+			android:id="@+id/Explorer_PathFragment"
+			android:name="com.ccproject.ccremote.fragment.NavigationFragment"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="3dp"
+			android:layout_marginBottom="3dp"/>
+
 		<android.support.v4.widget.SwipeRefreshLayout
 			android:id="@+id/Explorer_SwipeRefresh"
 			android:layout_width="match_parent"

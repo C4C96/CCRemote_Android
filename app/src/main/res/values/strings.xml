@@ -15,9 +15,16 @@
 	<string name="Cut">Cut</string>
 	<string name="Paste">Paste</string>
 	<string name="Delete">Delete</string>
+	<string name="Back">Back</string>
+
+	<string name="RootDirectory">Root</string>
+	<string name="Desktop">Desktop</string>
+	<string name="This_PC">This PC</string>
 
 	<string name="DeleteConfirmTitle">Confirm</string>
 	<string name="DeleteConfirmMsg">You are going to delete these files on your PC. Are you sure?</string>
+
+	<string name="DoubleClickToQuit">Double click to quit</string>
 
 	<string name="Port">Port</string>
 	<string name="CheckUpdate">Check Update</string>

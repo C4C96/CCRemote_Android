@@ -5,6 +5,13 @@
 	<item android:id="@+id/explorer_toolbar_paste"
 		  android:title="@string/Paste"
 		  android:icon="@drawable/ic_paste"
+		  android:visible="false"
+		  app:showAsAction="ifRoom"/>
+
+	<item android:id="@+id/explorer_toolbar_back"
+		  android:title="@string/Back"
+		  android:icon="@drawable/ic_back"
+		  android:visible="false"
 		  app:showAsAction="ifRoom"/>
 
 </menu>

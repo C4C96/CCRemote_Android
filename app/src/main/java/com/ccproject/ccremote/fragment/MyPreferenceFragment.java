@@ -35,7 +35,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements Preferen
 				int newPort = Integer.valueOf((String)newValue);
 				if (newPort > 65535 || newPort < 1024)
 				{
-					Toast.makeText(MyApplication.getContext(), getResources().getString(R.string.PortRangeError), Toast.LENGTH_SHORT).show();
+					Toast.makeText(MyApplication.getContext(), R.string.PortRangeError, Toast.LENGTH_SHORT).show();
 					return false;
 				}
 				break;
