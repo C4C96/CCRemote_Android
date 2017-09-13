@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.adapter;
+package com.ccproject.ccremote.explorer;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import com.ccproject.ccremote.R;
 
 import java.util.List;
 
-public class NavigationItemAdapter extends RecyclerView.Adapter<NavigationItemAdapter.ViewHolder>
+class NavigationItemAdapter extends RecyclerView.Adapter<NavigationItemAdapter.ViewHolder>
 {
 	private List<String> mNavigationItemList; // 第一个是根目录，后续是除了'\'的路径部分
 	private NavigationItemAdapter.OnItemClickListener mOnItemClickListener;
@@ -35,8 +35,7 @@ public class NavigationItemAdapter extends RecyclerView.Adapter<NavigationItemAd
 	public NavigationItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
 	{
 		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_navigation, parent, false);
-		NavigationItemAdapter.ViewHolder holder = new NavigationItemAdapter.ViewHolder(view);
-		return holder;
+		return new NavigationItemAdapter.ViewHolder(view);
 	}
 
 	@Override

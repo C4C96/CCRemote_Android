@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.adapter;
+package com.ccproject.ccremote.connection;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.item.Server;
 
 import java.util.List;
 
-public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder>
+class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder>
 {
 	private List<Server> mServerList;
 	private OnItemClickListener mOnItemClickListener;

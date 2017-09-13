@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.ccproject.ccremote.MyApplication;
 import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.item.Server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

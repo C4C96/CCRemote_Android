@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.item;
+package com.ccproject.ccremote.explorer;
 
 public class Disk extends FileSystemEntry
 {

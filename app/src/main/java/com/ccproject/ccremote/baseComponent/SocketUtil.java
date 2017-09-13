@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.connection;
+package com.ccproject.ccremote.baseComponent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

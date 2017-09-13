@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.fragment;
+package com.ccproject.ccremote.explorer;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.adapter.NavigationItemAdapter;
+import com.ccproject.ccremote.explorer.NavigationItemAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

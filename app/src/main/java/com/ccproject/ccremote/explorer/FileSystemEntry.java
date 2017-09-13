@@ -1,6 +1,4 @@
-package com.ccproject.ccremote.item;
-
-import java.io.FileOutputStream;
+package com.ccproject.ccremote.explorer;
 
 public class FileSystemEntry
 {

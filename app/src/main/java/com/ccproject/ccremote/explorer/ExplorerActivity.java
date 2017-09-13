@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.activity;
+package com.ccproject.ccremote.explorer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,11 +21,8 @@ import android.widget.Toast;
 
 import com.ccproject.ccremote.R;
 import com.ccproject.ccremote.Tools;
-import com.ccproject.ccremote.adapter.FileAdapter;
-import com.ccproject.ccremote.connection.LocalServer;
-import com.ccproject.ccremote.fragment.NavigationFragment;
-import com.ccproject.ccremote.item.Disk;
-import com.ccproject.ccremote.item.FileSystemEntry;
+import com.ccproject.ccremote.baseComponent.BaseActivity;
+import com.ccproject.ccremote.baseComponent.LocalServer;
 import com.goyourfly.multiple.adapter.MultipleAdapter;
 import com.goyourfly.multiple.adapter.MultipleSelect;
 import com.goyourfly.multiple.adapter.StateChangeListener;

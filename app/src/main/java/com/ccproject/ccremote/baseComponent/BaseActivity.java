@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.activity;
+package com.ccproject.ccremote.baseComponent;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +7,6 @@ import android.view.MenuItem;
 
 import com.ccproject.ccremote.MyApplication;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 

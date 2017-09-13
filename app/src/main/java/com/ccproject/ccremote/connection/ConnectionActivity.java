@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.activity;
+package com.ccproject.ccremote.connection;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.adapter.ServerAdapter;
-import com.ccproject.ccremote.connection.ScanServerTool;
-import com.ccproject.ccremote.item.Server;
+import com.ccproject.ccremote.MainActivity;
+import com.ccproject.ccremote.baseComponent.BaseActivity;
+import com.ccproject.ccremote.preference.MyPreferenceActivity;
 
 import java.util.List;
 import java.util.Vector;

@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.fragment;
+package com.ccproject.ccremote.preference;
 
 import android.os.Bundle;
 import android.preference.EditTextPreference;

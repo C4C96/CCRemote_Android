@@ -3,7 +3,7 @@ package com.ccproject.ccremote;
 import android.app.Application;
 import android.content.Context;
 
-import com.ccproject.ccremote.connection.LocalServer;
+import com.ccproject.ccremote.baseComponent.LocalServer;
 
 public class MyApplication extends Application
 {

@@ -22,7 +22,7 @@
 
 		<fragment
 			android:id="@+id/Explorer_PathFragment"
-			android:name="com.ccproject.ccremote.fragment.NavigationFragment"
+			android:name="com.ccproject.ccremote.explorer.NavigationFragment"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="3dp"

@@ -1,10 +1,10 @@
-package com.ccproject.ccremote.activity;
+package com.ccproject.ccremote.preference;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
-import com.ccproject.ccremote.fragment.MyPreferenceFragment;
+import com.ccproject.ccremote.baseComponent.BaseActivity;
 import com.ccproject.ccremote.R;
 
 public class MyPreferenceActivity extends BaseActivity

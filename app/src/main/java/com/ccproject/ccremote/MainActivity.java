@@ -1,11 +1,12 @@
-package com.ccproject.ccremote.activity;
+package com.ccproject.ccremote;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.connection.LocalServer;
+import com.ccproject.ccremote.baseComponent.BaseActivity;
+import com.ccproject.ccremote.baseComponent.LocalServer;
+import com.ccproject.ccremote.explorer.ExplorerActivity;
 
 public class MainActivity extends BaseActivity
 {

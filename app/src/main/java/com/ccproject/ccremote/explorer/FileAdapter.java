@@ -1,4 +1,4 @@
-package com.ccproject.ccremote.adapter;
+package com.ccproject.ccremote.explorer;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,12 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ccproject.ccremote.R;
-import com.ccproject.ccremote.item.Disk;
-import com.ccproject.ccremote.item.FileSystemEntry;
 
 import java.util.List;
 
-public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
+class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 {
 	private List<FileSystemEntry> mFileList;
 	private FileAdapter.OnItemClickListener mOnItemClickListener;

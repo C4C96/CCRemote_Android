@@ -1,13 +1,11 @@
-package com.ccproject.ccremote.connection;
+package com.ccproject.ccremote.baseComponent;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.ccproject.ccremote.Tools;
-import com.ccproject.ccremote.activity.BaseActivity;
-import com.ccproject.ccremote.activity.ConnectionActivity;
+import com.ccproject.ccremote.connection.ConnectionActivity;
 import com.ccproject.ccremote.MyApplication;
 import com.ccproject.ccremote.R;
 
@@ -22,6 +20,8 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 	public static final int CUT_FILE = 123;
 	public static final int PASTE_FILE = 1024;
 	public static final int DELETE_FILE = 321;
+
+	private static final int HEART_BEAT_NUMBER = -1;
 
 	private SocketUtil mSocketUtil;
 
@@ -59,10 +59,15 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 		return number;
 	}
 
-	public void sendForResponse(int head, @NonNull byte[] body, @NonNull ResponseHandle responseHandle)
+	public void sendForResponse(int head, @NonNull byte[] body, ResponseHandle responseHandle)
 	{
 		int number = send(head, body);
 		mResponseHandles.append(number, responseHandle);
+	}
+
+	public void setHeartBeatListener(ResponseHandle responseHandle)
+	{
+		mResponseHandles.append(HEART_BEAT_NUMBER, responseHandle);
 	}
 
 	public void disconnect()
@@ -84,9 +89,9 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 		if (responseHandle == null) return;
 		byte[] body = Arrays.copyOfRange(msg, 4, msg.length);
 		responseHandle.handle(body);
-		mResponseHandles.remove(number);
+		if (number != HEART_BEAT_NUMBER)
+			mResponseHandles.remove(number);
 	}
-
 
 	@Override
 	public void onConnectFailed(SocketUtil socketUtil)
