@@ -88,7 +88,7 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 		ResponseHandle responseHandle = mResponseHandles.get(number);
 		if (responseHandle == null) return;
 		byte[] body = Arrays.copyOfRange(msg, 4, msg.length);
-		responseHandle.handle(body);
+		responseHandle.handleResponse(body);
 		if (number != HEART_BEAT_NUMBER)
 			mResponseHandles.remove(number);
 	}
@@ -105,6 +105,6 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 
 	public interface ResponseHandle
 	{
-		void handle(byte[] response);
+		void handleResponse(byte[] response);
 	}
 }

@@ -186,32 +186,21 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 			mCurrentPath = "";
 			while (cursor + 7 <= bytes.length)
 			{
-				try
-				{
-					String path = new String(Arrays.copyOfRange(bytes, cursor, cursor + 3), "UTF-8");
-					int labelLength = Tools.getInt(bytes, cursor + 3);
-					cursor += 7;
-					if (cursor + labelLength > bytes.length) break;
-					String label = new String(Arrays.copyOfRange(bytes, cursor, cursor + labelLength), "UTF-8");
-					mFileList.add(new Disk(path, label));
-					cursor += labelLength;
-				} catch (UnsupportedEncodingException e)
-				{
-					break;
-				}
+				String path = new String(bytes, cursor, 3);
+				cursor += 3;
+				int labelLength = Tools.getInt(bytes, cursor);
+				cursor += 4;
+				if (cursor + labelLength > bytes.length) break;
+				String label = Tools.getString(bytes, cursor, labelLength);
+				mFileList.add(new Disk(path, label));
+				cursor += labelLength;
 			}
 		}
 		else
 		{
 			int length = Tools.getInt(bytes, cursor);
 			cursor += 4;
-			try
-			{
-				mCurrentPath = new String(Arrays.copyOfRange(bytes, cursor, cursor + length), "UTF-8");
-			} catch (UnsupportedEncodingException e)
-			{
-				e.printStackTrace();
-			}
+			mCurrentPath = Tools.getString(bytes, cursor, length);
 			cursor += length;
 			mFileList.add(FileSystemEntry.getUpperDirectory(mCurrentPath));
 			while (cursor + 8 <= bytes.length)
@@ -220,17 +209,9 @@ public class ExplorerActivity extends BaseActivity implements SwipeRefreshLayout
 				length = Tools.getInt(bytes, cursor + 4);
 				cursor += 8;
 				if (cursor + length > bytes.length) break;
-				try
-				{
-					String path = new String(Arrays.copyOfRange(bytes, cursor, cursor + length), "UTF-8");
-					mFileList.add(new FileSystemEntry(path, attribute));
-				}
-				catch (UnsupportedEncodingException e)
-				{}
-				finally
-				{
-					cursor += length;
-				}
+				String path = Tools.getString(bytes, cursor, length);
+				mFileList.add(new FileSystemEntry(path, attribute));
+				cursor += length;
 			}
 		}
 		runOnUiThread(()->

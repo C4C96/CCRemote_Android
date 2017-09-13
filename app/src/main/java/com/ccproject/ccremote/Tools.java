@@ -35,18 +35,14 @@ public class Tools
 		bytes.write(i & 0xFF);
 	}
 
-	public static String getString(byte[] bytes, int index)
+	public static String getString(byte[] bytes, int index, int length)
 	{
-		if (index + 4 > bytes.length)
-			return null;
-		int strLength = Tools.getInt(bytes, index);
-		index += 4;
-		if (index + strLength > bytes.length)
+		if (index + length > bytes.length)
 			return null;
 		String ret = null;
 		try
 		{
-			ret = new String(Arrays.copyOfRange(bytes, index, index + strLength), "UTF-8");
+			ret = new String(Arrays.copyOfRange(bytes, index, index + length), "UTF-8");
 		} catch (UnsupportedEncodingException e)
 		{
 			e.printStackTrace();
@@ -54,22 +50,9 @@ public class Tools
 		return ret;
 	}
 
-	public static String getString(byte[] bytes)
+	public static String getString(byte[] bytes, int length)
 	{
-		return getString(bytes, 0);
-	}
-
-	public static String[] getStrings(byte[] bytes, int index)
-	{
-		String str;
-		int cursor = index;
-		List<String> ret = new ArrayList<>();
-		while ((str = getString(bytes, cursor)) != null)
-		{
-			ret.add(str);
-			cursor += str.getBytes().length + 4;
-		}
-		return ret.toArray(new String[ret.size()]);
+		return getString(bytes, 0, length);
 	}
 
 	public static void writeString(ByteArrayOutputStream bytes, String string)
@@ -77,6 +60,23 @@ public class Tools
 		byte[] strBytes = string.getBytes();
 		writeInt(bytes, strBytes.length);
 		bytes.write(strBytes, 0, strBytes.length);
+	}
+
+	public static long getLong(byte[] bytes, int index)
+	{
+		  return ((((long) bytes[index] & 0xff) << 56)
+		       | (((long) bytes[index + 1] & 0xff) << 48)
+		       | (((long) bytes[index + 2] & 0xff) << 40)
+		       | (((long) bytes[index + 3] & 0xff) << 32)
+		       | (((long) bytes[index + 4] & 0xff) << 24)
+		       | (((long) bytes[index + 5] & 0xff) << 16)
+		       | (((long) bytes[index + 6] & 0xff) << 8)
+			   | (((long) bytes[index + 7] & 0xff)));
+	}
+
+	public static long getLong(byte[] bytes)
+	{
+		return getLong(bytes, 0);
 	}
 
 }
