@@ -23,23 +23,6 @@ public class FileSystemEntry
 		return (mAttribute & FileAttributes.Directory) == FileAttributes.Directory;
 	}
 
-	public static FileSystemEntry getUpperDirectory(String path)
-	{
-		FileSystemEntry ret = new FileSystemEntry();
-		if (path.length() <= 3) // C:\
-			ret.mPath = "";
-		else
-		{
-			// C:\dire1\dire2 -> C:\dire1
-			ret.mPath = path.substring(0, path.lastIndexOf("\\"));
-			if (ret.mPath.length() <= 2) // C:\dire1 -> C:
-				ret.mPath += "\\";       // C:\
-		}
-		ret.mAttribute = FileAttributes.Directory;
-		ret.mSimpleName = "...";
-		return ret;
-	}
-
 	public String getPath()
 	{
 		return mPath;

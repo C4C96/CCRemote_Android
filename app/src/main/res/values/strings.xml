@@ -15,7 +15,12 @@
 	<string name="Cut">Cut</string>
 	<string name="Paste">Paste</string>
 	<string name="Delete">Delete</string>
+	<string name="NewFolder">New Folder</string>
+	<string name="Property">Property</string>
+
+	<string name="Upper">Upper</string>
 	<string name="Back">Back</string>
+	<string name="Forward">Forward</string>
 
 	<string name="RootDirectory">Root</string>
 	<string name="Desktop">Desktop</string>

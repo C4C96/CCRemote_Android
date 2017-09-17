@@ -15,7 +15,12 @@
 	<string name="Cut">剪切</string>
 	<string name="Paste">粘贴</string>
 	<string name="Delete">删除</string>
+	<string name="NewFolder">新建文件夹</string>
+	<string name="Property">属性</string>
+
+	<string name="Upper">上级目录</string>
 	<string name="Back">返回</string>
+	<string name="Forward">前进</string>
 
 	<string name="RootDirectory">根目录</string>
 	<string name="Desktop">桌面</string>

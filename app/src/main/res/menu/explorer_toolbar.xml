@@ -2,16 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<item android:id="@+id/explorer_toolbar_paste"
-		  android:title="@string/Paste"
-		  android:icon="@drawable/ic_paste"
-		  android:visible="false"
+	<item android:id="@+id/explorer_toolbar_upper"
+		  android:title="@string/Upper"
+		  android:icon="@drawable/ic_upper"
 		  app:showAsAction="ifRoom"/>
 
 	<item android:id="@+id/explorer_toolbar_back"
 		  android:title="@string/Back"
 		  android:icon="@drawable/ic_back"
-		  android:visible="false"
+		  app:showAsAction="ifRoom"/>
+
+	<item android:id="@+id/explorer_toolbar_forward"
+		  android:title="@string/Forward"
+		  android:icon="@drawable/ic_forward"
 		  app:showAsAction="ifRoom"/>
 
 </menu>

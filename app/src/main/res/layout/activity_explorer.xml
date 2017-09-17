@@ -6,42 +6,94 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<LinearLayout
+	<FrameLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="vertical">
+		android:layout_height="match_parent">
 
-		<android.support.v7.widget.Toolbar
-			android:id="@+id/Explorer_Toolbar"
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			android:background="?attr/colorPrimary"
-			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-			app:title="@string/ExplorerActivity_title"/>
+			android:layout_height="match_parent"
+			android:orientation="vertical">
 
-		<fragment
-			android:id="@+id/Explorer_PathFragment"
-			android:name="com.ccproject.ccremote.explorer.NavigationFragment"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="3dp"
-			android:layout_marginBottom="3dp"/>
-
-		<android.support.v4.widget.SwipeRefreshLayout
-			android:id="@+id/Explorer_SwipeRefresh"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent">
-
-			<android.support.v7.widget.RecyclerView
-				android:id="@+id/Explorer_RecyclerView"
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/Explorer_Toolbar"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:scrollbars = "vertical"/>
+				android:layout_height="?attr/actionBarSize"
+				android:background="?attr/colorPrimary"
+				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+				app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+				app:title="@string/ExplorerActivity_title"/>
 
-		</android.support.v4.widget.SwipeRefreshLayout>
+			<fragment
+				android:id="@+id/Explorer_PathFragment"
+				android:name="com.ccproject.ccremote.explorer.NavigationFragment"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="3dp"
+				android:layout_marginBottom="3dp"/>
 
-	</LinearLayout>
+			<android.support.v4.widget.SwipeRefreshLayout
+				android:id="@+id/Explorer_SwipeRefresh"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/Explorer_RecyclerView"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:scrollbars = "vertical"/>
+
+			</android.support.v4.widget.SwipeRefreshLayout>
+
+		</LinearLayout>
+
+
+		<com.github.clans.fab.FloatingActionMenu
+			android:id="@+id/explorer_floatingMenu"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:paddingBottom="25dp"
+			android:paddingRight="25dp"
+			app:menu_backgroundColor="#ccffffff"
+			app:menu_labels_position="left"
+			app:menu_openDirection="up"
+			app:menu_labels_ellipsize="end"
+			app:menu_colorNormal="@color/colorPrimary"
+			app:menu_colorPressed="@color/colorPrimaryLight">
+
+			<com.github.clans.fab.FloatingActionButton
+				android:id="@+id/explorer_paste_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_paste"
+				app:fab_label="@string/Paste"
+				app:fab_size="mini"
+				app:fab_colorNormal="@color/colorPrimary"
+				app:fab_colorPressed="@color/colorPrimaryLight"/>
+
+			<com.github.clans.fab.FloatingActionButton
+				android:id="@+id/explorer_new_folder_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_new_folder"
+				app:fab_label="@string/NewFolder"
+				app:fab_size="mini"
+				app:fab_colorNormal="@color/colorPrimary"
+				app:fab_colorPressed="@color/colorPrimaryLight"/>
+
+			<com.github.clans.fab.FloatingActionButton
+				android:id="@+id/explorer_property_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_property"
+				app:fab_label="@string/Property"
+				app:fab_size="mini"
+				app:fab_colorNormal="@color/colorPrimary"
+				app:fab_colorPressed="@color/colorPrimaryLight"/>
+
+		</com.github.clans.fab.FloatingActionMenu>
+
+	</FrameLayout>
 
 	<!-- 滑动菜单 -->
 	<LinearLayout
