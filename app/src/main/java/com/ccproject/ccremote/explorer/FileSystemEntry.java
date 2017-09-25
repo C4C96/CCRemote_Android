@@ -9,6 +9,8 @@ public class FileSystemEntry
 
 	protected FileSystemEntry(){}
 
+	public boolean selected = false;
+
 	public FileSystemEntry(String path, int attribute)
 	{
 		this.mPath = path;

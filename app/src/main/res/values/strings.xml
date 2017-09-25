@@ -26,14 +26,17 @@
 	<string name="Desktop">Desktop</string>
 	<string name="This_PC">This PC</string>
 
-	<string name="DeleteConfirmTitle">Confirm</string>
+	<string name="Confirm">Confirm</string>
+	<string name="Cancel">Cancel</string>
 	<string name="DeleteConfirmMsg">You are going to delete these files on your PC. Are you sure?</string>
+	<string name="InputNewFolderName">Input new folder name</string>
 
 	<string name="DoubleClickToQuit">Double click to quit</string>
 
 	<string name="Port">Port</string>
 	<string name="CheckUpdate">Check Update</string>
 
+	<string name="FolderNameError">Folder name has illegal character</string>
 	<string name="PortRangeError">Port should be between 1024 and 65535</string>
 
 	<string name="Disconnected">Disconnected</string>

@@ -1,10 +1,8 @@
 package com.ccproject.ccremote.explorer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,9 +12,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ccproject.ccremote.R;
@@ -25,18 +23,7 @@ import com.ccproject.ccremote.baseComponent.BaseActivity;
 import com.ccproject.ccremote.baseComponent.LocalServer;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.goyourfly.multiple.adapter.MultipleAdapter;
-import com.goyourfly.multiple.adapter.MultipleSelect;
-import com.goyourfly.multiple.adapter.StateChangeListener;
-import com.goyourfly.multiple.adapter.ViewState;
-import com.goyourfly.multiple.adapter.menu.CustomMenuBar;
-import com.goyourfly.multiple.adapter.menu.MenuController;
-import com.goyourfly.multiple.adapter.viewholder.view.CheckBoxFactory;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -44,7 +31,7 @@ import java.util.Vector;
 public class ExplorerActivity extends BaseActivity implements NavigationFragment.OnPathItemClickListener
 {
 	private List<FileSystemEntry> mFileList;
-	private MultipleAdapter mAdapter;
+	private FileAdapter mAdapter;
 
 	private NavigationFragment mNavigationFragment;
 
@@ -55,6 +42,8 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 	private MenuItem mUpperItem;
 	private MenuItem mBackItem;
 	private MenuItem mForwardItem;
+
+	private FloatingActionMenu mFloatingMenu;
 
 	private Stack<String> mBackStack;
 	private Stack<String> mForwardStack;
@@ -100,8 +89,8 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 		mRecyclerView = (RecyclerView) findViewById(R.id.Explorer_RecyclerView);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(layoutManager);
-		FileAdapter adapter = new FileAdapter(mFileList);
-		adapter.setOnItemClickListener((file)->
+		mAdapter = new FileAdapter(mFileList);
+		mAdapter.setOnItemClickListener((file)->
 		{
 			if (file.isDirectory())
 			{
@@ -111,20 +100,16 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 			else
 				;// TODO
 		});
-		mAdapter = MultipleSelect
-				.with(this)
-				.adapter(adapter)
-				.decorateFactory(new CheckBoxFactory(
-						ContextCompat.getColor(ExplorerActivity.this, R.color.colorPrimary),
-						300,
-						Gravity.END | Gravity.CENTER_VERTICAL,
-						10))
-				.stateChangeListener(new MultiSelectStateChangeListener())
-				.customMenu(new MultiSelectMenuBar(this,
-						R.menu.explorer_multiselect,
-						ContextCompat.getColor(ExplorerActivity.this, R.color.colorPrimary),
-						Gravity.TOP))
-				.build();
+		mAdapter.setOnSelectModeChangeListener(isSelectMode ->
+		{
+			if (isSelectMode && mCurrentPath.equals(""))
+			{
+				mAdapter.changeSelectMode(false);
+				return;
+			}
+			// TODO 变toolbar
+
+		});
 		mRecyclerView.setAdapter(mAdapter);
 		mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 	}
@@ -138,27 +123,53 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 
 	private void initFloatingMenu()
 	{
-		FloatingActionMenu menu = (FloatingActionMenu) findViewById(R.id.explorer_floatingMenu);
-		menu.setOnClickListener((v)->
+		mFloatingMenu = (FloatingActionMenu) findViewById(R.id.explorer_floatingMenu);
+		mFloatingMenu.setOnClickListener((v)->
 		{
-			if (menu.isOpened())
-				menu.close(true);
+			if (mFloatingMenu.isOpened())
+				mFloatingMenu.close(true);
 		});
-		menu.setClickable(false);
-		menu.setOnMenuToggleListener(menu::setClickable);
+		mFloatingMenu.setClickable(false);
+		mFloatingMenu.setOnMenuToggleListener(mFloatingMenu::setClickable);
+
+		if (mCurrentPath.equals(""))
+			mFloatingMenu.hideMenu(false);
+		else
+			mFloatingMenu.showMenu(false);
 
 		FloatingActionButton paste = (FloatingActionButton) findViewById(R.id.explorer_paste_button);
 		paste.setOnClickListener((v)->
 		{
 			if (!mCurrentPath.equals(""))
 				myApplication.mLocalServer.send(LocalServer.PASTE_FILE, mCurrentPath.getBytes());
-			menu.close(true);
+			mFloatingMenu.close(true);
 		});
 
 		FloatingActionButton newFolder = (FloatingActionButton) findViewById(R.id.explorer_new_folder_button);
 		newFolder.setOnClickListener((v)->
 		{
-			//TODO
+			final char[] illegalChar = new char[]{'\\', '/', ':', '*', '?', '\"', '<', '>', '|'};
+			final EditText editText = new EditText(ExplorerActivity.this);
+			editText.setMaxLines(255);
+			new AlertDialog.Builder(ExplorerActivity.this)
+					.setTitle(R.string.InputNewFolderName)
+					.setView(editText)
+					.setPositiveButton(R.string.Confirm, (dialog, which)->
+					{
+						String folderName = editText.getText().toString();
+						for (char c : illegalChar)
+							if (folderName.indexOf(c) != -1)
+							{
+								Toast.makeText(ExplorerActivity.this, R.string.FolderNameError, Toast.LENGTH_SHORT).show();
+								return;
+							}
+						String path = mCurrentPath.charAt(mCurrentPath.length() - 1) == '\\' ?
+										mCurrentPath + folderName :
+										mCurrentPath + "\\" + folderName;
+						myApplication.mLocalServer.send(LocalServer.CREATE_DIRECTORY, path.getBytes());
+					})
+					.setNegativeButton(R.string.Cancel, null)
+					.show();
 		});
 
 		FloatingActionButton property = (FloatingActionButton) findViewById(R.id.explorer_property_button);
@@ -274,7 +285,7 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 		}
 		runOnUiThread(()->
 		{
-			mAdapter.cancel(false);
+			mAdapter.changeSelectMode(false);
 			mAdapter.notifyDataSetChanged();
 			if (recognize) mForwardStack.clear();
 			if (mUpperItem != null)
@@ -292,6 +303,13 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 				mForwardItem.setEnabled(!mForwardStack.empty());
 				mForwardItem.setIcon(mForwardStack.empty() ? R.drawable.ic_forward_disable : R.drawable.ic_forward);
 			}
+			if (mFloatingMenu != null)
+			{
+				if (mCurrentPath.equals(""))
+					mFloatingMenu.hideMenu(true);
+				else
+					mFloatingMenu.showMenu(true);
+			}
 			mNavigationFragment.changePath(mCurrentPath);
 			mSwipeRefresh.setRefreshing(false);
 			if (scrollToFirst)
@@ -305,47 +323,7 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 		goToPath(path, true);
 	}
 
-	private class MultiSelectStateChangeListener implements StateChangeListener
-	{
-		@Override
-		public void onSelectMode()
-		{
-			if (mCurrentPath.equals(""))
-				mAdapter.cancel(false);
-		}
-
-		@Override
-		public void onSelect(int i, int i1)
-		{
-
-		}
-
-		@Override
-		public void onUnSelect(int i, int i1)
-		{
-
-		}
-
-		@Override
-		public void onDone(@NotNull ArrayList<Integer> arrayList)
-		{
-
-		}
-
-		@Override
-		public void onDelete(@NotNull ArrayList<Integer> arrayList)
-		{
-
-		}
-
-		@Override
-		public void onCancel()
-		{
-
-		}
-	}
-
-	private class MultiSelectMenuBar extends CustomMenuBar
+/*	private class MultiSelectMenuBar extends CustomMenuBar
 	{
 		public MultiSelectMenuBar(@NotNull Activity activity, int menuId, int menuBgColor, int gravity)
 		{
@@ -384,14 +362,14 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 					break;
 			}
 		}
-	}
+	}*/
 
 	private long backPressedTime;
 	@Override
 	public void onBackPressed()
 	{
-		if (mAdapter.getShowState() != ViewState.INSTANCE.getDEFAULT())
-			mAdapter.cancel(true);
+		if (mAdapter.isSelectMode())
+			mAdapter.changeSelectMode(false);
 		else
 		{
 			if (System.currentTimeMillis() < backPressedTime + 2000)

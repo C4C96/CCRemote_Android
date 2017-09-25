@@ -26,14 +26,17 @@
 	<string name="Desktop">桌面</string>
 	<string name="This_PC">此电脑</string>
 
-	<string name="DeleteConfirmTitle">确认</string>
+	<string name="Confirm">确认</string>
+	<string name="Cancel">取消</string>
 	<string name="DeleteConfirmMsg">这些文件将从你的电脑上删除，确定吗？</string>
+	<string name="InputNewFolderName">输入新文件夹的名字</string>
 
 	<string name="DoubleClickToQuit">再按一次退出</string>
 
 	<string name="Port">端口</string>
 	<string name="CheckUpdate">检查更新</string>
 
+	<string name="FolderNameError">新文件夹名包含非法字符</string>
 	<string name="PortRangeError">端口应在1024与65535之间</string>
 
 	<string name="Disconnected">连接中断</string>
