@@ -13,10 +13,10 @@ public class Tools
 	 */
 	public static int getInt(byte[] bytes, int index)
 	{
-		return (bytes[index] << 24)
-				| (bytes[index + 1] << 16)
-				| (bytes[index + 2] << 8)
-				| (bytes[index + 3] & 0xFF);
+		return ((bytes[index] & 0xFF) << 24)
+				+ ((bytes[index + 1]  & 0xFF)<< 16)
+				+ ((bytes[index + 2] & 0xFF) << 8)
+				+ (bytes[index + 3] & 0xFF);
 	}
 
 	public static int getInt(byte[] bytes)
