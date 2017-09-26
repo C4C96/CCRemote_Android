@@ -30,6 +30,7 @@
 	<string name="Cancel">取消</string>
 	<string name="DeleteConfirmMsg">这些文件将从你的电脑上删除，确定吗？</string>
 	<string name="InputNewFolderName">输入新文件夹的名字</string>
+	<string name="NoSuchFolder">该目录不存在</string>
 
 	<string name="DoubleClickToQuit">再按一次退出</string>
 

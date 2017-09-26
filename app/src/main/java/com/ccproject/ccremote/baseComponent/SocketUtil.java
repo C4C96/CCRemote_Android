@@ -159,7 +159,6 @@ public class SocketUtil
 							bytes.write(buffer, 0, count);
 							remainLength -= count;
 						}
-
 						if (mOnMsgReceiveListener != null)
 							mThreadPool.execute(() -> mOnMsgReceiveListener.onMsgReceive(bytes.toByteArray()));
 					} catch (Exception e)

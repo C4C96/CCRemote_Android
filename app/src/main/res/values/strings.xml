@@ -30,6 +30,7 @@
 	<string name="Cancel">Cancel</string>
 	<string name="DeleteConfirmMsg">You are going to delete these files on your PC. Are you sure?</string>
 	<string name="InputNewFolderName">Input new folder name</string>
+	<string name="NoSuchFolder">No such folder</string>
 
 	<string name="DoubleClickToQuit">Double click to quit</string>
 

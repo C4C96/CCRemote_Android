@@ -102,6 +102,12 @@
 		android:layout_gravity="start"
 		android:background="#FFFFFFFF">
 
+		<Button
+			android:id="@+id/explorer_desktop"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/Desktop"/>
+
 	</LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
