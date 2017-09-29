@@ -7,16 +7,27 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ccproject.ccremote.MyApplication;
 import com.ccproject.ccremote.R;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.implments.SwipeItemAdapterMangerImpl;
+import com.daimajia.swipe.implments.SwipeItemMangerImpl;
+import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl;
+import com.daimajia.swipe.interfaces.SwipeAdapterInterface;
+import com.daimajia.swipe.interfaces.SwipeItemMangerInterface;
+import com.daimajia.swipe.util.Attributes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
+class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implements SwipeItemMangerInterface, SwipeAdapterInterface
 {
 	private List<FileSystemEntry> mFileList;
 	private boolean mSelectMode;
+
+	private SwipeItemMangerImpl mItemManager = new SwipeItemRecyclerMangerImpl(this);
 
 	private FileAdapter.OnItemClickListener mOnItemClickListener;
 	private OnSelectModeChangeListener mOnSelectModeChangeListener;
@@ -26,6 +37,8 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 		CheckBox checkBox;
 		ImageView iconImage;
 		TextView nameText;
+
+		boolean canBeClick = true;
 
 		public ViewHolder(View view)
 		{
@@ -53,6 +66,7 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 	public void onBindViewHolder(FileAdapter.ViewHolder holder, int position)
 	{
 		final FileSystemEntry file = mFileList.get(position);
+
 		holder.nameText.setText(file.getSimpleName());
 		if (file instanceof Disk)
 			holder.iconImage.setImageResource(R.drawable.ic_disk);
@@ -64,6 +78,8 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 		holder.checkBox.setChecked(file.selected);
 		holder.itemView.setOnClickListener((v)->
 		{
+			if (!holder.canBeClick)
+				return;
 			if (mSelectMode)
 			{
 				file.selected = !file.selected;
@@ -74,6 +90,10 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 		});
 		holder.itemView.setOnLongClickListener((v)->
 		{
+			if (!holder.canBeClick)
+				return false;
+			if (file instanceof Disk)
+				return false;
 			if (!mSelectMode)
 			{
 				changeSelectMode(true);
@@ -82,11 +102,60 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 			}
 			return false;
 		});
+		holder.itemView.findViewById(R.id.FileItem_Open).setOnClickListener((v)->Toast.makeText(MyApplication.getContext(), "TEST", Toast.LENGTH_SHORT).show());
+		holder.canBeClick = true;
+
+		SwipeLayout swipe = (SwipeLayout)holder.itemView.findViewById(R.id.FileItem_Swipe);
+		mItemManager.bindView(swipe, position);
+		swipe.addSwipeListener(new SwipeLayout.SwipeListener()
+		{
+			@Override
+			public synchronized void onStartOpen(SwipeLayout layout)
+			{
+				if (mSelectMode)
+				{
+					layout.close(false);
+					return;
+				}
+				holder.canBeClick = false;
+			}
+
+			@Override
+			public void onOpen(SwipeLayout layout)
+			{
+
+			}
+
+			@Override
+			public void onStartClose(SwipeLayout layout)
+			{
+
+			}
+
+			@Override
+			public void onClose(SwipeLayout layout)
+			{
+				holder.canBeClick = true;
+			}
+
+			@Override
+			public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset)
+			{
+
+			}
+
+			@Override
+			public void onHandRelease(SwipeLayout layout, float xvel, float yvel)
+			{
+
+			}
+		});
 	}
 
 	public void changeSelectMode(boolean isSelect)
 	{
 		mSelectMode = isSelect;
+		mItemManager.closeAllItems();
 		for(FileSystemEntry file : mFileList)
 			file.selected = false;
 		notifyDataSetChanged();
@@ -132,5 +201,74 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>
 	public interface OnSelectModeChangeListener
 	{
 		void onSelectModeChange(boolean isSelectMode);
+	}
+
+	@Override
+	public int getSwipeLayoutResourceId(int position)
+	{
+		return R.id.FileItem_Swipe;
+	}
+
+
+
+	//以下是SwipeItemMangerInterface的实现，因为SwipeItemMangerImpl里的bug，所以不得不写这些废话
+	@Override
+	public void openItem(int position)
+	{
+
+	}
+
+	@Override
+	public void closeItem(int position)
+	{
+
+	}
+
+	@Override
+	public void closeAllExcept(SwipeLayout layout)
+	{
+
+	}
+
+	@Override
+	public void closeAllItems()
+	{
+
+	}
+
+	@Override
+	public List<Integer> getOpenItems()
+	{
+		return null;
+	}
+
+	@Override
+	public List<SwipeLayout> getOpenLayouts()
+	{
+		return null;
+	}
+
+	@Override
+	public void removeShownLayouts(SwipeLayout layout)
+	{
+
+	}
+
+	@Override
+	public boolean isOpen(int position)
+	{
+		return false;
+	}
+
+	@Override
+	public Attributes.Mode getMode()
+	{
+		return null;
+	}
+
+	@Override
+	public void setMode(Attributes.Mode mode)
+	{
+
 	}
 }

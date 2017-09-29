@@ -17,6 +17,7 @@
 	<string name="Delete">删除</string>
 	<string name="NewFolder">新建文件夹</string>
 	<string name="Property">属性</string>
+	<string name="OpenOnPC">在电脑上打开</string>
 
 	<string name="Upper">上级目录</string>
 	<string name="Back">返回</string>

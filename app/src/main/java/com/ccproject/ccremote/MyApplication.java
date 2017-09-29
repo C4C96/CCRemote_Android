@@ -7,7 +7,7 @@ import com.ccproject.ccremote.baseComponent.LocalServer;
 
 public class MyApplication extends Application
 {
-	private static Context mContext;
+	private static MyApplication mMyApplication;
 
 	public LocalServer mLocalServer;
 
@@ -15,11 +15,16 @@ public class MyApplication extends Application
 	public void onCreate()
 	{
 		super.onCreate();
-		mContext = getApplicationContext();
+		mMyApplication = (MyApplication) getApplicationContext();
 	}
 
 	public static Context getContext()
 	{
-		return mContext;
+		return mMyApplication;
+	}
+
+	public static MyApplication getInstance()
+	{
+		return mMyApplication;
 	}
 }

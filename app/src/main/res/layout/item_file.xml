@@ -1,34 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:orientation="horizontal"
-			  android:layout_width="match_parent"
-			  android:layout_height="wrap_content"
-			  android:layout_margin="15dp">
-	<CheckBox
-		android:id="@+id/FileItem_CheckBox"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:buttonTint="@color/colorPrimary"
-		android:shadowColor="@color/colorPrimary" />
-	<ImageView
-		android:id="@+id/FileItem_Icon"
-		android:layout_width="45dp"
-		android:layout_height="45dp"
-		android:gravity="center"
-		android:layout_marginLeft="10dp"
-		android:src="@drawable/ic_file"/>
-	<TextView
-		android:id="@+id/FileItem_Name_Text"
-		android:layout_width="0dp"
-		android:layout_height="match_parent"
-		android:layout_weight="1"
-		android:gravity="center_vertical"
-		android:textSize="18sp"
-		android:layout_marginLeft="20dp"
-		android:textColor="#FF000000"
-		android:text="DEFAULT_FILE_NAME"
-		android:lines="1"
-		android:ellipsize="middle"/>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+								xmlns:app="http://schemas.android.com/apk/res-auto"
+								android:id="@+id/FileItem_Swipe"
+								android:layout_width="match_parent"
+								android:layout_height="wrap_content"
+								app:drag_edge="right">
 
-</LinearLayout>
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent">
+		<Button
+			android:id="@+id/FileItem_Open"
+			android:layout_width="80dp"
+			android:layout_height="match_parent"
+			android:background="#f7e891"
+			android:text="@string/OpenOnPC"/>
+		<Button
+			android:id="@+id/FileItem_Property"
+			android:layout_width="80dp"
+			android:layout_height="match_parent"
+			android:background="#50d94e"
+			android:text="@string/Property"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="#00FFFFFF">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_margin="15dp">
+			<CheckBox
+				android:id="@+id/FileItem_CheckBox"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:buttonTint="@color/colorPrimary"
+				android:shadowColor="@color/colorPrimary" />
+			<ImageView
+				android:id="@+id/FileItem_Icon"
+				android:layout_width="45dp"
+				android:layout_height="45dp"
+				android:gravity="center"
+				android:layout_marginLeft="10dp"
+				android:src="@drawable/ic_file"/>
+			<TextView
+				android:id="@+id/FileItem_Name_Text"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:gravity="center_vertical"
+				android:textSize="18sp"
+				android:layout_marginLeft="20dp"
+				android:textColor="#FF000000"
+				android:text="DEFAULT_FILE_NAME"
+				android:lines="1"
+				android:ellipsize="middle"/>
+		</LinearLayout>
+	</LinearLayout>
+
+</com.daimajia.swipe.SwipeLayout>

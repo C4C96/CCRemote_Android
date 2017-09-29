@@ -22,6 +22,7 @@ import com.ccproject.ccremote.R;
 import com.ccproject.ccremote.Tools;
 import com.ccproject.ccremote.baseComponent.BaseActivity;
 import com.ccproject.ccremote.baseComponent.LocalServer;
+import com.daimajia.swipe.interfaces.SwipeAdapterInterface;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -97,16 +98,9 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 				mSwipeRefresh.setRefreshing(true);
 				goToPath(file.getPath(), true);
 			}
-			else
-				;// TODO
 		});
 		mAdapter.setOnSelectModeChangeListener(isSelectMode ->
 		{
-			if (isSelectMode && mCurrentPath.equals(""))
-			{
-				mAdapter.changeSelectMode(false);
-				return;
-			}
 			mMenuId = isSelectMode ? R.menu.explorer_multiselect : R.menu.explorer_toolbar;
 			invalidateOptionsMenu();
 		});
@@ -201,10 +195,6 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		for (FileSystemEntry file : mAdapter.getSelected())
-			Tools.writeString(bytes, file.getPath());
-
 		switch (item.getItemId())
 		{
 			case android.R.id.home:
@@ -247,11 +237,11 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 				break;
 
 			case R.id.explorer_multiselect_copy:
-				myApplication.mLocalServer.send(LocalServer.COPY_FILE, bytes.toByteArray());
+				myApplication.mLocalServer.send(LocalServer.COPY_FILE, getSelectedBytes());
 				mAdapter.changeSelectMode(false);
 				break;
 			case R.id.explorer_multiselect_cut:
-				myApplication.mLocalServer.send(LocalServer.CUT_FILE, bytes.toByteArray());
+				myApplication.mLocalServer.send(LocalServer.CUT_FILE, getSelectedBytes());
 				mAdapter.changeSelectMode(false);
 				break;
 			case R.id.explorer_multiselect_delete:
@@ -260,7 +250,7 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 						.setMessage(R.string.DeleteConfirmMsg)
 						.setPositiveButton(R.string.Yes, (dialog, which)->
 						{
-							myApplication.mLocalServer.send(LocalServer.DELETE_FILE, bytes.toByteArray());
+							myApplication.mLocalServer.send(LocalServer.DELETE_FILE, getSelectedBytes());
 							mAdapter.changeSelectMode(false);
 						})
 						.setNegativeButton(R.string.No, null)
@@ -393,6 +383,14 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 				backPressedTime = System.currentTimeMillis();
 			}
 		}
+	}
+
+	private byte[] getSelectedBytes()
+	{
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		for (FileSystemEntry file : mAdapter.getSelected())
+			Tools.writeString(bytes, file.getPath());
+		return bytes.toByteArray();
 	}
 
 	public static void actionStart(Context context)
