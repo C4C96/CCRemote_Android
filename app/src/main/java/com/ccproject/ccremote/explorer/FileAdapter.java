@@ -31,6 +31,7 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implement
 
 	private FileAdapter.OnItemClickListener mOnItemClickListener;
 	private OnSelectModeChangeListener mOnSelectModeChangeListener;
+	private OnButtonClickListener mOnButtonClickListener;
 
 	static class ViewHolder extends RecyclerView.ViewHolder
 	{
@@ -102,7 +103,6 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implement
 			}
 			return false;
 		});
-		holder.itemView.findViewById(R.id.FileItem_Open).setOnClickListener((v)->Toast.makeText(MyApplication.getContext(), "TEST", Toast.LENGTH_SHORT).show());
 		holder.canBeClick = true;
 
 		SwipeLayout swipe = (SwipeLayout)holder.itemView.findViewById(R.id.FileItem_Swipe);
@@ -150,6 +150,20 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implement
 
 			}
 		});
+
+		if (mOnButtonClickListener != null)
+		{
+			holder.itemView.findViewById(R.id.FileItem_Open).setOnClickListener((v ->
+			{
+				mOnButtonClickListener.onButtonClick(R.id.FileItem_Open, file);
+				swipe.close(true);
+			}));
+			holder.itemView.findViewById(R.id.FileItem_Property).setOnClickListener((v)->
+			{
+				mOnButtonClickListener.onButtonClick(R.id.FileItem_Property, file);
+				swipe.close(true);
+			});
+		}
 	}
 
 	public void changeSelectMode(boolean isSelect)
@@ -193,6 +207,11 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implement
 		mOnSelectModeChangeListener = onSelectModeChangeListener;
 	}
 
+	public void setOnButtonClickListener(OnButtonClickListener onButtonClickListener)
+	{
+		mOnButtonClickListener = onButtonClickListener;
+	}
+
 	public interface OnItemClickListener
 	{
 		void onItemClick(FileSystemEntry fileSystemEntry);
@@ -201,6 +220,11 @@ class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> implement
 	public interface OnSelectModeChangeListener
 	{
 		void onSelectModeChange(boolean isSelectMode);
+	}
+
+	public interface OnButtonClickListener
+	{
+		void onButtonClick(int id, FileSystemEntry fileSystemEntry);
 	}
 
 	@Override

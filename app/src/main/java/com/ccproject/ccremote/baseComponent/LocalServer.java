@@ -21,6 +21,7 @@ public class LocalServer implements SocketUtil.OnMsgReceiveListener, SocketUtil.
 	public static final int PASTE_FILE = 1024;
 	public static final int DELETE_FILE = 321;
 	public static final int CREATE_DIRECTORY = 456;
+	public static final int OPEN_FILE = 1919;
 
 	private static final int HEART_BEAT_NUMBER = -1;
 

@@ -104,6 +104,17 @@ public class ExplorerActivity extends BaseActivity implements NavigationFragment
 			mMenuId = isSelectMode ? R.menu.explorer_multiselect : R.menu.explorer_toolbar;
 			invalidateOptionsMenu();
 		});
+		mAdapter.setOnButtonClickListener((id, file)->
+		{
+			switch (id)
+			{
+				case R.id.FileItem_Open:
+					myApplication.mLocalServer.send(LocalServer.OPEN_FILE, file.getPath().getBytes());
+					break;
+				case R.id.FileItem_Property:
+					break;
+			}
+		});
 		mRecyclerView.setAdapter(mAdapter);
 		mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 	}
